@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UnresolvedTicketsByChannelsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/unresolved-tickets-by-channels', [UnresolvedTicketsBychannelController::class, '']);
+Route::get('/unresolved-tickets-by-channels', [UnresolvedTicketsByChannelsController::class, 'getTickets']);
