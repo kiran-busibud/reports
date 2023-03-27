@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\TicketsController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UnresolvedTicketsByChannelsController;
+use Routes\TicketRoutes;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,4 +15,19 @@ use App\Http\Controllers\UnresolvedTicketsByChannelsController;
 |
 */
 
-Route::get('/unresolved-tickets-by-channels', [UnresolvedTicketsByChannelsController::class, 'getTickets']);
+Route::get('/unresolved-tickets-by-channels', [TicketsController::class, 'getUnresolvedTicketsByChannels']);
+Route::get('/unresolved-tickets-by-channels-listview', [TicketsController::class, 'getUnresolvedTicketsByChannelsListView']);
+Route::get('/unresolvedTicketsByPendingTime', [TicketsController::class, 'getUnresolvedTicketsByPendingTime']);
+Route::get('/unresolvedTicketsByPendingTimeListview', [TicketsController::class, 'getUnresolvedTicketsByPendingTimeListView']);
+Route::get('/unresolvedTicketByMostBackAndForth', [TicketsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
+
+// Route::group(["prefix", "reports"], function(){ 
+
+//     //ticket reports
+//     Route::group(['prefix', "ticket"], function(){
+
+//         TicketRoutes::reportRoutes();
+
+//     });
+
+// });
