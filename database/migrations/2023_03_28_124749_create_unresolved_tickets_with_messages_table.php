@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('unresolved_tickets_with_messages', function (Blueprint $table) {
+        Schema::create('unresolved_tickets', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->text('ticket_title');
             $table->longText('ticket_description');
             $table->bigInteger('ticket_agent')->length(20);
@@ -21,6 +20,9 @@ return new class extends Migration
             $table->bigInteger('ticket_brand_id')->length(20);
             $table->bigInteger('ticket_channel')->length(20);
             $table->longText('ticket_tags');
+            $table->integer('ticket_agent_messages');
+            $table->integer('ticket_customer_messages');
+            $table->integer('ticket_total_messages');
         });
     }
 

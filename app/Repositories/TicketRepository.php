@@ -273,4 +273,8 @@ class TicketRepository
         return $result;
 
     }
+
+    function getUnresolvedTickets(){
+        
+    }
 }
