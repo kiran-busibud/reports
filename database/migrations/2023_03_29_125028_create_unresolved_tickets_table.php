@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('ticket_agent_messages');
             $table->integer('ticket_customer_messages');
             $table->integer('ticket_total_messages');
+            $table->datetime('ticket_date');
         });
     }
 
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('unresolved_tickets_with_messages');
+        Schema::dropIfExists('unresolved_tickets');
     }
 };

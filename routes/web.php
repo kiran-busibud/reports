@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\TicketsController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
-use Routes\TicketRoutes;
+// use routes\TicketRoutes;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,12 +22,20 @@ Route::get('/unresolvedTicketsByPendingTime', [TicketsController::class, 'getUnr
 Route::get('/unresolvedTicketsByPendingTimeListview', [TicketsController::class, 'getUnresolvedTicketsByPendingTimeListView']);
 Route::get('/unresolvedTicketByMostBackAndForth', [TicketsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
 
-// Route::group(["prefix", "reports"], function(){ 
+Route::get('/bychannels', [ReportsController::class, 'getUnresolvedTicketsByChannels']);
+Route::get('/bychannels/listview', [ReportsController::class, 'getUnresolvedTicketsByChannelsListview']);
+Route::get('/pendingtime', [ReportsController::class, 'getUnresolvedTicketsByPendingTime']);
+Route::get('/pendingtime/listview', [ReportsController::class, 'getUnresolvedTicketsByPendingTimeListview']);
+Route::get('/messages', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
+Route::get('/messages/listview', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForthListview']);
 
+
+// Route::group(["prefix", "reports"], function(){ 
+    
 //     //ticket reports
 //     Route::group(['prefix', "ticket"], function(){
 
-//         TicketRoutes::reportRoutes();
+//         routes/TicketRoutes::reportRoutes();
 
 //     });
 

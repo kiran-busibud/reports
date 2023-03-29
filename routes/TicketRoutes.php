@@ -1,5 +1,5 @@
 <?php
-namespace Routes;
+namespace routes\TicketRoutes;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UnresolvedTicketsByChannelsController;
@@ -14,5 +14,5 @@ class TicketRoutes
             Route::get('/bychannels', [UnresolvedTicketsByChannelsController::class, 'getTickets']);
         });
     }
-
+    
 }

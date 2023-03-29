@@ -279,7 +279,7 @@ class TicketRepository
         $params = [];
         $unresolved_ticket_status_ids = [4, 6];
         $params = array_merge($params, $unresolved_ticket_status_ids);
-        $query = "SELECT id,ticket_status_id,ticket_channel,ticket_agent,ticket_brand_id,ticket_title,ticket_description
+        $query = "SELECT id,ticket_status_id,ticket_channel,ticket_agent,ticket_brand_id,ticket_title,ticket_description,ticket_date
                     FROM hl_ticket 
                     WHERE ticket_status_id in (" . implode(',', array_fill(0, count($unresolved_ticket_status_ids), '?')) . ")";
 
