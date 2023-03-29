@@ -20,7 +20,7 @@ class CacheTicketReports extends Command
      *
      * @var string
      */
-    protected $description = 'precache the unresolved tickets';
+    protected $description = 'precache tickets along with metadata required for reports';
 
     /**
      * Execute the console command.
