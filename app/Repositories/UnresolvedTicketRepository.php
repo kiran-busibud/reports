@@ -304,4 +304,113 @@ class UnresolvedTicketRepository
         $result = DB::select($query, $params);
         return $result;
     }
+
+    function getUnresolvedTicketsForNotification()
+    {
+        $count = 10;
+        $time_in_days = 100;
+        $query = "SELECT ticket_title, ticket_description 
+                    FROM unresolved_tickets 
+                    WHERE TIMESTAMPDIFF(HOUR, ticket_date, CURRENT_DATE()) BETWEEN 0 AND $time_in_days";
+
+        $params = [];
+
+        if (isset($this->body['ticket_status_id'])) {
+            $ticketStatusId = $this->body['ticket_status_id'];
+            if (is_array($ticketStatusId)) {
+                $query .= " AND ticket_status_id IN (" . implode(',', array_fill(0, count($ticketStatusId), '?')) . ")";
+                $params = array_merge($params, $ticketStatusId);
+            } else {
+                $query .= " AND ticket_status_id = ?";
+                $params[] = $ticketStatusId;
+            }
+        }
+
+        if (isset($this->body['ticket_channel'])) {
+            $ticketChannels = $this->body['ticket_channel'];
+            if (is_array($ticketChannels)) {
+                $query .= " AND ticket_channel IN (" . implode(',', array_fill(0, count($ticketChannels), '?')) . ")";
+                $params = array_merge($params, $ticketChannels);
+            } else {
+                $query .= " AND ticket_channel = ?";
+                $params[] = $ticketChannels;
+            }
+        }
+
+        if (isset($this->body['ticket_brand_id'])) {
+            $ticketBrandIds = $this->body['ticket_brand_id'];
+            if (is_array($ticketBrandIds)) {
+                $query .= " AND ticket_brand_id IN (" . implode(',', array_fill(0, count($ticketBrandIds), '?')) . ")";
+                $params = array_merge($params, $ticketBrandIds);
+            } else {
+                $query .= " AND ticket_brand_id = ?";
+                $params[] = $ticketBrandIds;
+            }
+        }
+
+        if (isset($this->body['ticket_agent'])) {
+            $query .= " AND ticket_agent = ?";
+            $params[] = $this->body['ticket_agent'];
+        }
+
+        $query .= "LIMIT $count";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getUnresolvedTicketIdsForNotification()
+    {
+        $count = 5;
+        $time_in_days = 100;
+        $query = "SELECT id 
+                    FROM unresolved_tickets 
+                    WHERE TIMESTAMPDIFF(HOUR, ticket_date, CURRENT_DATE()) BETWEEN 0 AND $time_in_days";
+
+        $params = [];
+
+        if (isset($this->body['ticket_status_id'])) {
+            $ticketStatusId = $this->body['ticket_status_id'];
+            if (is_array($ticketStatusId)) {
+                $query .= " AND ticket_status_id IN (" . implode(',', array_fill(0, count($ticketStatusId), '?')) . ")";
+                $params = array_merge($params, $ticketStatusId);
+            } else {
+                $query .= " AND ticket_status_id = ?";
+                $params[] = $ticketStatusId;
+            }
+        }
+
+        if (isset($this->body['ticket_channel'])) {
+            $ticketChannels = $this->body['ticket_channel'];
+            if (is_array($ticketChannels)) {
+                $query .= " AND ticket_channel IN (" . implode(',', array_fill(0, count($ticketChannels), '?')) . ")";
+                $params = array_merge($params, $ticketChannels);
+            } else {
+                $query .= " AND ticket_channel = ?";
+                $params[] = $ticketChannels;
+            }
+        }
+
+        if (isset($this->body['ticket_brand_id'])) {
+            $ticketBrandIds = $this->body['ticket_brand_id'];
+            if (is_array($ticketBrandIds)) {
+                $query .= " AND ticket_brand_id IN (" . implode(',', array_fill(0, count($ticketBrandIds), '?')) . ")";
+                $params = array_merge($params, $ticketBrandIds);
+            } else {
+                $query .= " AND ticket_brand_id = ?";
+                $params[] = $ticketBrandIds;
+            }
+        }
+
+        if (isset($this->body['ticket_agent'])) {
+            $query .= " AND ticket_agent = ?";
+            $params[] = $this->body['ticket_agent'];
+        }
+
+        $query .= "ORDER BY ticket_date DESC";
+        $query .= "LIMIT $count";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
 }
