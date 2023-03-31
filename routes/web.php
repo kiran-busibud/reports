@@ -3,7 +3,7 @@
 use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
-// use routes\TicketRoutes;
+use routes\ReportsRoutes\TicketRoutes;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,15 +28,18 @@ Route::get('/pendingtime', [ReportsController::class, 'getUnresolvedTicketsByPen
 Route::get('/pendingtime/listview', [ReportsController::class, 'getUnresolvedTicketsByPendingTimeListview']);
 Route::get('/messages', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
 Route::get('/messages/listview', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForthListview']);
+Route::get('/tickets/notification', [ReportsController::class, 'getUnresolvedTicketsForNotification']);
+Route::get('/ticketIds/notification', [ReportsController::class, 'getUnresolvedTicketIdsForNotification']);
 
 
-// Route::group(["prefix", "reports"], function(){ 
+
+Route::group(["prefix", "reports"], function(){ 
     
-//     //ticket reports
-//     Route::group(['prefix', "ticket"], function(){
+    //ticket reports
+    Route::group(['prefix', "ticket"], function(){
 
-//         routes/TicketRoutes::reportRoutes();
+        TicketRoutes::reportRoutes();
 
-//     });
+    });
 
-// });
+});

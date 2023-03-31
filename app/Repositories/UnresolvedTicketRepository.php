@@ -6,11 +6,12 @@ use Illuminate\Support\Facades\DB;
 
 class UnresolvedTicketRepository
 {
-    protected $body = ['ticket_status_id' => [6, 4]];
+    protected $body = ['ticket_status_id' => [6, 4], 'ticket_tags'=>[8,101]];
     function updateUnresolvedTickets(array $tickets, array $tag_mapping, array $message_counts_mapping)
     {
         foreach ($tickets as $ticket) {
             DB::table('unresolved_tickets')->insert([
+                'ticket_id' => $ticket->id,
                 'ticket_title' => $ticket->ticket_title,
                 'ticket_description' => $ticket->ticket_description,
                 'ticket_agent' => $ticket->ticket_agent,
@@ -70,7 +71,17 @@ class UnresolvedTicketRepository
             $params[] = $this->body['ticket_agent'];
         }
 
+        if (isset($this->body['ticket_tags'])) {
+            $tags = $this->body['ticket_tags'];
+            $regex = '(' . implode('|', $tags) . ')';
+            $regex = ',' . $regex . ',';
+            $regex = "'" . $regex . "'";
+            $query .= " AND CONCAT(',', ticket_tags  , ',') REGEXP $ ";
+        }
+
         $query .= " GROUP BY ticket_channel, ticket_status_id";
+        // dd($query);
+        // dd($params);
         $result = DB::select($query, $params);
         return $result;
     }
@@ -308,7 +319,7 @@ class UnresolvedTicketRepository
     function getUnresolvedTicketsForNotification()
     {
         $count = 10;
-        $time_in_days = 100;
+        $time_in_days = 1000;
         $query = "SELECT ticket_title, ticket_description 
                     FROM unresolved_tickets 
                     WHERE TIMESTAMPDIFF(HOUR, ticket_date, CURRENT_DATE()) BETWEEN 0 AND $time_in_days";
@@ -362,7 +373,7 @@ class UnresolvedTicketRepository
     function getUnresolvedTicketIdsForNotification()
     {
         $count = 5;
-        $time_in_days = 100;
+        $time_in_days = 1000;
         $query = "SELECT id 
                     FROM unresolved_tickets 
                     WHERE TIMESTAMPDIFF(HOUR, ticket_date, CURRENT_DATE()) BETWEEN 0 AND $time_in_days";
@@ -407,10 +418,11 @@ class UnresolvedTicketRepository
             $params[] = $this->body['ticket_agent'];
         }
 
-        $query .= "ORDER BY ticket_date DESC";
-        $query .= "LIMIT $count";
+        $query .= " ORDER BY ticket_date DESC";
+        $query .= " LIMIT $count";
 
         $result = DB::select($query, $params);
         return $result;
     }
+
 }

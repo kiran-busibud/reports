@@ -50,7 +50,7 @@ class ReportsService
 
         $tags = $this->ticketMetaRepository->getTags();
 
-        $message_counts = $this->ticketMetaRepository->getMessageCounts();unresolvedTicketRepository
+        $message_counts = $this->ticketMetaRepository->getMessageCounts();
 
         $tag_mapping = $this->getTagMapper($tags);
 

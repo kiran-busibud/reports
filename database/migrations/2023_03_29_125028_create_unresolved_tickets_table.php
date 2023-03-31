@@ -24,7 +24,6 @@ return new class extends Migration
             $table->integer('ticket_customer_messages');
             $table->integer('ticket_total_messages');
             $table->datetime('ticket_date');
-            
         });
     }
 

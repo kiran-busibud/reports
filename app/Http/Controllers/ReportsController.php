@@ -49,4 +49,16 @@ class ReportsController extends Controller
         $tickets = $this->unresolvedTicketRepository->getUnresolvedTicketsByMostBackAndForthListview();
         dd($tickets);
     }
+
+    function getUnresolvedTicketsForNotification(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getUnresolvedTicketsForNotification();
+        dd($tickets);
+    }
+
+    function getUnresolvedTicketIdsForNotification(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getUnresolvedTicketIdsForNotification();
+        dd($tickets);
+    }
 }
