@@ -61,4 +61,16 @@ class ReportsController extends Controller
         $tickets = $this->unresolvedTicketRepository->getUnresolvedTicketIdsForNotification();
         dd($tickets);
     }
+
+    function getTicketsByFirstReplyTimeBrackets(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketsByFirstReplyTimeBrackets();
+        dd($tickets);
+    }
+
+    function getTicketsByResolutionTime(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketsByResolutionTime();
+        dd($tickets);
+    }
 }

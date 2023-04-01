@@ -16,11 +16,11 @@ use routes\ReportsRoutes\TicketRoutes;
 |
 */
 
-Route::get('/unresolved-tickets-by-channels', [TicketsController::class, 'getUnresolvedTicketsByChannels']);
-Route::get('/unresolved-tickets-by-channels-listview', [TicketsController::class, 'getUnresolvedTicketsByChannelsListView']);
-Route::get('/unresolvedTicketsByPendingTime', [TicketsController::class, 'getUnresolvedTicketsByPendingTime']);
-Route::get('/unresolvedTicketsByPendingTimeListview', [TicketsController::class, 'getUnresolvedTicketsByPendingTimeListView']);
-Route::get('/unresolvedTicketByMostBackAndForth', [TicketsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
+// Route::get('/unresolved-tickets-by-channels', [TicketsController::class, 'getUnresolvedTicketsByChannels']);
+// Route::get('/unresolved-tickets-by-channels-listview', [TicketsController::class, 'getUnresolvedTicketsByChannelsListView']);
+// Route::get('/unresolvedTicketsByPendingTime', [TicketsController::class, 'getUnresolvedTicketsByPendingTime']);
+// Route::get('/unresolvedTicketsByPendingTimeListview', [TicketsController::class, 'getUnresolvedTicketsByPendingTimeListView']);
+// Route::get('/unresolvedTicketByMostBackAndForth', [TicketsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
 
 Route::get('/bychannels', [ReportsController::class, 'getUnresolvedTicketsByChannels']);
 Route::get('/bychannels/listview', [ReportsController::class, 'getUnresolvedTicketsByChannelsListview']);
@@ -30,16 +30,17 @@ Route::get('/messages', [ReportsController::class, 'getUnresolvedTicketsByMostBa
 Route::get('/messages/listview', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForthListview']);
 Route::get('/tickets/notification', [ReportsController::class, 'getUnresolvedTicketsForNotification']);
 Route::get('/ticketIds/notification', [ReportsController::class, 'getUnresolvedTicketIdsForNotification']);
+Route::get('/tickets/replytime', [ReportsController::class, 'getTicketsByFirstReplyTimeBrackets']);
+Route::get("/tickets/resolutiontime", [ReportsController::class, 'getTicketsByResolutionTime']);
 
 
-
-Route::group(["prefix", "reports"], function(){ 
+// Route::group(["prefix", "reports"], function(){ 
     
-    //ticket reports
-    Route::group(['prefix', "ticket"], function(){
+//     //ticket reports
+//     Route::group(['prefix', "ticket"], function(){
 
-        TicketRoutes::reportRoutes();
+//         TicketRoutes::reportRoutes();
 
-    });
+//     });
 
-});
+// });

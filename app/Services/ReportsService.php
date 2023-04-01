@@ -29,34 +29,36 @@ class ReportsService
         return $tag_mapping;
     }
 
-    function getMessageCountsMapper(array $message_counts)
+    function getMessageMapper(array $messages)
     {
-        $message_counts_mapping = [];
+        $message_mapping = [];
 
-        foreach ($message_counts as $message_count) {
-            $counts = [];
-            $counts['total_messages'] = $message_count->total_messages;
-            $counts['agent_messages'] = $message_count->agent_messages;
-            $counts['customer_messages'] = $message_count->customer_messages;
-            $message_counts_mapping[$message_count->message_ticket_id] = $counts;
+        foreach ($messages as $message) {
+            $data = [];
+            $data['total_messages'] = $message->total_messages;
+            $data['agent_messages'] = $message->agent_messages;
+            $data['customer_messages'] = $message->customer_messages;
+            $data['first_reply_time'] = $message->first_reply_time;
+            
+            $message_mapping[$message->message_ticket_id] = $data;
         }
-        return $message_counts_mapping;
+        return $message_mapping;
     }
 
-    function cacheUnresolvedTickets()
+    function cacheTickets()
     {
 
-        $tickets = $this->ticketRepository->getUnresolvedTickets();
+        $tickets = $this->ticketRepository->getTickets();
 
         $tags = $this->ticketMetaRepository->getTags();
 
-        $message_counts = $this->ticketMetaRepository->getMessageCounts();
+        $messages = $this->ticketMetaRepository->getMessages();
 
         $tag_mapping = $this->getTagMapper($tags);
 
-        $message_counts_mapping = $this->getMessageCountsMapper($message_counts);
+        $message_mapping = $this->getMessageMapper($messages);
 
-        $this->unresolvedTicketRepository->updateUnresolvedTickets($tickets, $tag_mapping, $message_counts_mapping);
+        $this->unresolvedTicketRepository->updateTickets($tickets, $tag_mapping, $message_mapping);
 
     }
 }

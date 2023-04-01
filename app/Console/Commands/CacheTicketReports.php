@@ -13,14 +13,14 @@ class CacheTicketReports extends Command
      *
      * @var string
      */
-    protected $signature = 'database:populate-unresolved-tickets';
+    protected $signature = 'database:cache-tickets';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'precache tickets along with metadata required for reports';
+    protected $description = 'precache tickets along with metadata required for ticket reports';
 
     /**
      * Execute the console command.
@@ -36,7 +36,7 @@ class CacheTicketReports extends Command
     public function handle(): void
     {
 
-        $this->reportsService->cacheUnresolvedTickets();
+        $this->reportsService->cacheTickets();
 
     }
 }
