@@ -517,4 +517,84 @@ class UnresolvedTicketRepository
         $result = DB::select($query, $params);
         return $result;
     }
+
+    function getTicketsByCreationTimeDaily()
+    {
+        $query = "SELECT COUNT(*) as count, DATE(ticket_date) AS day, ticket_status_id 
+                    FROM tickets_cache 
+                    WHERE 1 = 1";
+
+        $params = [];
+
+        if (isset($this->body['ticket_status_id'])) {
+            $ticketStatusId = $this->body['ticket_status_id'];
+            if (is_array($ticketStatusId)) {
+                $query .= " AND ticket_status_id IN (" . implode(',', array_fill(0, count($ticketStatusId), '?')) . ")";
+                $params = array_merge($params, $ticketStatusId);
+            } else {
+                $query .= " AND ticket_status_id = ?";
+                $params[] = $ticketStatusId;
+            }
+        }
+
+        if (isset($this->body['ticket_channel'])) {
+            $ticketChannels = $this->body['ticket_channel'];
+            if (is_array($ticketChannels)) {
+                $query .= " AND ticket_channel IN (" . implode(',', array_fill(0, count($ticketChannels), '?')) . ")";
+                $params = array_merge($params, $ticketChannels);
+            } else {
+                $query .= " AND ticket_channel = ?";
+                $params[] = $ticketChannels;
+            }
+        }
+
+        if (isset($this->body['ticket_brand_id'])) {
+            $ticketBrandIds = $this->body['ticket_brand_id'];
+            if (is_array($ticketBrandIds)) {
+                $query .= " AND ticket_brand_id IN (" . implode(',', array_fill(0, count($ticketBrandIds), '?')) . ")";
+                $params = array_merge($params, $ticketBrandIds);
+            } else {
+                $query .= " AND ticket_brand_id = ?";
+                $params[] = $ticketBrandIds;
+            }
+        }
+
+        if (isset($this->body['ticket_agent'])) {
+            $query .= " AND ticket_agent = ?";
+            $params[] = $this->body['ticket_agent'];
+        }
+
+        $query .= " GROUP BY ticket_status_id, day";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getTicketsByCreationTimeWeekly()
+    {
+        $params = [];
+        $query = "SELECT 
+                    CONCAT(DATE_FORMAT(MIN(ticket_date), '%b %e %y'), ' - ', DATE_FORMAT(MAX(ticket_date), '%b %e %y')) AS week_range,
+                    COUNT(*) AS total_count, ticket_status_id
+                FROM tickets_cache
+                GROUP BY ticket_status_id, YEARWEEK(ticket_date)
+                ORDER BY MIN(ticket_date)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getTicketsByCreationTimeMonthly()
+    {
+        $params = [];
+        $query = "SELECT 
+                    DATE_FORMAT(MAX(ticket_date), '%b %y') AS month,
+                    COUNT(*) AS total_count, ticket_status_id
+                FROM tickets_cache
+                GROUP BY ticket_status_id, MONTH(ticket_date)
+                ORDER BY MIN(ticket_date)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
 }

@@ -32,7 +32,9 @@ Route::get('/tickets/notification', [ReportsController::class, 'getUnresolvedTic
 Route::get('/ticketIds/notification', [ReportsController::class, 'getUnresolvedTicketIdsForNotification']);
 Route::get('/tickets/replytime', [ReportsController::class, 'getTicketsByFirstReplyTimeBrackets']);
 Route::get("/tickets/resolutiontime", [ReportsController::class, 'getTicketsByResolutionTime']);
-
+Route::get("/tickets/creationtime/daily", [ReportsController::class, 'getTicketsByCreationTimeDaily']);
+Route::get("/tickets/creationtime/weekly", [ReportsController::class, 'getTicketsByCreationTimeWeekly']);
+Route::get("/tickets/creationtime/monthly", [ReportsController::class, 'getTicketsByCreationTimemonthly']);
 
 // Route::group(["prefix", "reports"], function(){ 
     

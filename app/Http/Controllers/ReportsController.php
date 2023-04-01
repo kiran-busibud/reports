@@ -73,4 +73,22 @@ class ReportsController extends Controller
         $tickets = $this->unresolvedTicketRepository->getTicketsByResolutionTime();
         dd($tickets);
     }
+    
+    function getTicketsByCreationTimeDaily(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketsByCreationTimeDaily();
+        dd($tickets);
+    }
+
+    function getTicketsByCreationTimeWeekly(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketsByCreationTimeWeekly();
+        dd($tickets);
+    }
+
+    function getTicketsByCreationTimeMonthly(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketsByCreationTimeMonthly();
+        dd($tickets);
+    }
 }
