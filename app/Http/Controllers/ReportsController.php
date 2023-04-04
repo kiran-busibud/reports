@@ -91,4 +91,10 @@ class ReportsController extends Controller
         $tickets = $this->unresolvedTicketRepository->getTicketsByCreationTimeMonthly();
         dd($tickets);
     }
+
+    function getAverageAndMedianOfFirstReplyTimeDaily(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getAverageAndMedianOfFirstReplyTimeDaily();
+        dd($tickets);
+    }
 }

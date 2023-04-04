@@ -597,4 +597,17 @@ class UnresolvedTicketRepository
         $result = DB::select($query, $params);
         return $result;
     }
+
+    function getAverageAndMedianOfFirstReplyTimeDaily()
+    {
+        $params = [];
+        $query = "SELECT DATE_FORMAT(ticket_date, '%y-%m-%d') AS date,
+            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time)) AS median_value,
+            AVG(TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time)) AS average_value
+            FROM tickets_cache
+            GROUP BY date";
+        
+        $result = DB::select($query, $params);
+        return $result;
+    }
 }
