@@ -3,7 +3,7 @@
 use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
-use routes\ReportsRoutes\TicketRoutes;
+use routes\TicketRoutes;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,14 +36,17 @@ Route::get("/tickets/creationtime/daily", [ReportsController::class, 'getTickets
 Route::get("/tickets/creationtime/weekly", [ReportsController::class, 'getTicketsByCreationTimeWeekly']);
 Route::get("/tickets/creationtime/monthly", [ReportsController::class, 'getTicketsByCreationTimemonthly']);
 Route::get("/firstreply/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeDaily']);
+Route::get("/firstreply/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeWeekly']);
+
 
 // Route::group(["prefix", "reports"], function(){ 
     
 //     //ticket reports
 //     Route::group(['prefix', "ticket"], function(){
 
-//         TicketRoutes::reportRoutes();
+        
 
 //     });
-
+    
 // });
+// TicketRoutes::reportRoutes();

@@ -598,13 +598,12 @@ class UnresolvedTicketRepository
         return $result;
     }
 
-    function getAverageAndMedianOfFirstReplyTimeDaily()
+    function getTicketReplyTimesByDate($days)
     {
         $params = [];
-        $query = "SELECT DATE_FORMAT(ticket_date, '%y-%m-%d') AS date,
-            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time)) AS median_value,
-            AVG(TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time)) AS average_value
-            FROM tickets_cache";
+        $query = "SELECT ticket_date, TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time) as reply_time
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $days DAY)";
         
         if (isset($this->body['ticket_status_id'])) {
             $ticketStatusId = $this->body['ticket_status_id'];
@@ -651,8 +650,6 @@ class UnresolvedTicketRepository
             $regex = "'" . $regex . "'";
             $query .= " AND CONCAT(',', ticket_tags  , ',') REGEXP $regex";
         }
-
-        $query .= "GROUP BY date";
 
         $result = DB::select($query, $params);
         return $result;

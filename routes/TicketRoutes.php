@@ -1,5 +1,5 @@
 <?php
-namespace routes\TicketRoutes;
+namespace routes;
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UnresolvedTicketsByChannelsController;
