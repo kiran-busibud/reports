@@ -37,6 +37,8 @@ Route::get("/tickets/creationtime/weekly", [ReportsController::class, 'getTicket
 Route::get("/tickets/creationtime/monthly", [ReportsController::class, 'getTicketsByCreationTimemonthly']);
 Route::get("/firstreply/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeDaily']);
 Route::get("/firstreply/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeWeekly']);
+Route::get("/firstreply/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeMonthly']);
+
 
 
 // Route::group(["prefix", "reports"], function(){ 

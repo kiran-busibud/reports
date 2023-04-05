@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\UnresolvedTicketRepository;
 use DateTime;
-use DateTimeZone;
+use DateInterval;
 
 class ReportsController extends Controller
 {
@@ -53,42 +53,24 @@ class ReportsController extends Controller
         return $sum / $count;
     }
 
-    public function getWeeks($num_days)
+    public function getDaysToWeeksMapping($weeks)
     {
-        // Get the current date and time in the user's timezone
-        $now = new DateTime('now', new DateTimeZone('UTC'));
+        $cur_time = time();
+        $cur_date = new DateTime("@$cur_time");
+        $mapping = [];
 
-        // Calculate the start date and end date of the week that contains the current date
-        $start = clone $now;
-        $start->modify('monday this week');
-        $end = clone $start;
-        $end->modify("+6 days");
-
-        // Calculate the start date of the first week
-        $first_week_start = clone $start;
-        $first_week_start->modify("-" . ($num_days - 7) . " days");
-
-        // Build an array of week ranges
-        $week_ranges = array();
-        $week_start = clone $first_week_start;
-        while ($end >= $now && $week_start < $end) {
-            $week_end = clone $week_start;
-            $week_end->modify("+6 days");
-            $week_ranges[] = $week_start->format('Mj') . "-" . $week_end->format('Mj');
-            $week_start->modify("+7 days");
-        }
-
-        // If the last week ends after the current date, adjust the last week range to end on the current date
-        if ($week_ranges) {
-            $last_week_range = end($week_ranges);
-            $last_week_end = DateTime::createFromFormat('Mj', substr($last_week_range, 4));
-            if ($last_week_end > $now) {
-                $last_week_range = substr($last_week_range, 0, 4) . $now->format('j');
-                $week_ranges[count($week_ranges) - 1] = $last_week_range;
+        for($week = 0; $week<$weeks; $week++){
+            $cur_week_end_date = clone $cur_date;
+            $cur_week_start_date = clone $cur_date;
+            $cur_week_start_date->sub(new DateInterval('P6D'));
+            $value = $cur_week_start_date->format('Mj') ."-". $cur_week_end_date->format('M j');
+            for($day = 0; $day < 7; $day++){
+                $mapping[$cur_date->format('Mj')] = $value;
+                $cur_date->sub(new DateInterval('P1D'));
             }
         }
-
-        return $week_ranges;
+        // dd($mapping);
+        return $mapping;
     }
     function getUnresolvedTicketsByChannels(Request $request)
     {
@@ -189,22 +171,40 @@ class ReportsController extends Controller
 
     function getAverageAndMedianOfFirstReplyTimeWeekly(Request $request)
     {
-        dd($this->getWeeks(150));
-        // $tickets = $this->unresolvedTicketRepository->getTicketReplyTimesByDate(150);
-        // // dd(strtotime($tickets[0]->ticket_date));
-        // $tickets_by_weeks = [];
-        // $weeks = $this->getWeeks(150);
-        // foreach ($tickets as $ticket) {
-        //     $timestamp = strtotime($ticket->ticket_date);
-        //     $date = date('M', $timestamp) . date('d', $timestamp);
-        //     $tickets_by_days[$date][] = $ticket->reply_time;
-        // }
-        // // dd($tickets_by_days);
-        // $result = [];
-        // foreach ($tickets_by_days as $key => $values) {
-        //     $result[$key]['average'] = $this->getAverage($values);
-        //     $result[$key]['median'] = $this->getMedian($values);
-        // }
-        // dd($result);
+        $days_to_week_mapping = $this->getDaysToWeeksMapping(21);
+        $tickets = $this->unresolvedTicketRepository->getTicketReplyTimesByDate(147);
+
+        $tickets_by_weeks = [];
+        foreach ($tickets as $ticket) {
+            $timestamp = strtotime($ticket->ticket_date);
+            $date = date('M', $timestamp) . date('j', $timestamp);
+            $tickets_by_weeks[$days_to_week_mapping[$date]][] = $ticket->reply_time;
+        }
+        // dd($tickets_by_days);
+        $result = [];
+        foreach ($tickets_by_weeks as $key => $values) {
+            $result[$key]['average'] = $this->getAverage($values);
+            $result[$key]['median'] = $this->getMedian($values);
+        }
+        dd($result);
+    }
+
+    function getAverageAndMedianOfFirstReplyTimeMonthly(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketReplyTimesByDateForMonths(12);
+
+        $tickets_by_months = [];
+        foreach ($tickets as $ticket) {
+            $timestamp = strtotime($ticket->ticket_date);
+            $month = date('M', $timestamp);
+            $tickets_by_months[$month][] = $ticket->reply_time;
+        }
+
+        $result = [];
+        foreach ($tickets_by_months as $key => $values) {
+            $result[$key]['average'] = $this->getAverage($values);
+            $result[$key]['median'] = $this->getMedian($values);
+        }
+        dd($result);
     }
 }

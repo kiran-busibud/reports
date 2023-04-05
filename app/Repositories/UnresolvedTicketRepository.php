@@ -655,64 +655,61 @@ class UnresolvedTicketRepository
         return $result;
     }
 
-    // function getAverageAndMedianOfFirstReplyTimeMonthly()
-    // {
-    //     $params = [];
-    //     $query = "SELECT DATE_FORMAT(ticket_date, '%y-%m-%d') AS date,
-    //         PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time)) AS median_value,
-    //         AVG(TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time)) AS average_value
-    //         FROM tickets_cache";
+    function getTicketReplyTimesByDateForMonths($months)
+    {
+        $params = [];
+        $query = "SELECT ticket_date, TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time) as reply_time
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $months MONTH)";
         
-    //     if (isset($this->body['ticket_status_id'])) {
-    //         $ticketStatusId = $this->body['ticket_status_id'];
-    //         if (is_array($ticketStatusId)) {
-    //             $query .= " AND ticket_status_id IN (" . implode(',', array_fill(0, count($ticketStatusId), '?')) . ")";
-    //             $params = array_merge($params, $ticketStatusId);
-    //         } else {
-    //             $query .= " AND ticket_status_id = ?";
-    //             $params[] = $ticketStatusId;
-    //         }
-    //     }
+        if (isset($this->body['ticket_status_id'])) {
+            $ticketStatusId = $this->body['ticket_status_id'];
+            if (is_array($ticketStatusId)) {
+                $query .= " AND ticket_status_id IN (" . implode(',', array_fill(0, count($ticketStatusId), '?')) . ")";
+                $params = array_merge($params, $ticketStatusId);
+            } else {
+                $query .= " AND ticket_status_id = ?";
+                $params[] = $ticketStatusId;
+            }
+        }
 
-    //     if (isset($this->body['ticket_channel'])) {
-    //         $ticketChannels = $this->body['ticket_channel'];
-    //         if (is_array($ticketChannels)) {
-    //             $query .= " AND ticket_channel IN (" . implode(',', array_fill(0, count($ticketChannels), '?')) . ")";
-    //             $params = array_merge($params, $ticketChannels);
-    //         } else {
-    //             $query .= " AND ticket_channel = ?";
-    //             $params[] = $ticketChannels;
-    //         }
-    //     }
+        if (isset($this->body['ticket_channel'])) {
+            $ticketChannels = $this->body['ticket_channel'];
+            if (is_array($ticketChannels)) {
+                $query .= " AND ticket_channel IN (" . implode(',', array_fill(0, count($ticketChannels), '?')) . ")";
+                $params = array_merge($params, $ticketChannels);
+            } else {
+                $query .= " AND ticket_channel = ?";
+                $params[] = $ticketChannels;
+            }
+        }
 
-    //     if (isset($this->body['ticket_brand_id'])) {
-    //         $ticketBrandIds = $this->body['ticket_brand_id'];
-    //         if (is_array($ticketBrandIds)) {
-    //             $query .= " AND ticket_brand_id IN (" . implode(',', array_fill(0, count($ticketBrandIds), '?')) . ")";
-    //             $params = array_merge($params, $ticketBrandIds);
-    //         } else {
-    //             $query .= " AND ticket_brand_id = ?";
-    //             $params[] = $ticketBrandIds;
-    //         }
-    //     }
+        if (isset($this->body['ticket_brand_id'])) {
+            $ticketBrandIds = $this->body['ticket_brand_id'];
+            if (is_array($ticketBrandIds)) {
+                $query .= " AND ticket_brand_id IN (" . implode(',', array_fill(0, count($ticketBrandIds), '?')) . ")";
+                $params = array_merge($params, $ticketBrandIds);
+            } else {
+                $query .= " AND ticket_brand_id = ?";
+                $params[] = $ticketBrandIds;
+            }
+        }
 
-    //     if (isset($this->body['ticket_agent'])) {
-    //         $query .= " AND ticket_agent = ?";
-    //         $params[] = $this->body['ticket_agent'];
-    //     }
+        if (isset($this->body['ticket_agent'])) {
+            $query .= " AND ticket_agent = ?";
+            $params[] = $this->body['ticket_agent'];
+        }
 
-    //     if (isset($this->body['ticket_tags'])) {
-    //         $tags = $this->body['ticket_tags'];
-    //         $regex = '(' . implode('|', $tags) . ')';
-    //         $regex = ',' . $regex . ',';
-    //         $regex = "'" . $regex . "'";
-    //         $query .= " AND CONCAT(',', ticket_tags  , ',') REGEXP $regex";
-    //     }
+        if (isset($this->body['ticket_tags'])) {
+            $tags = $this->body['ticket_tags'];
+            $regex = '(' . implode('|', $tags) . ')';
+            $regex = ',' . $regex . ',';
+            $regex = "'" . $regex . "'";
+            $query .= " AND CONCAT(',', ticket_tags  , ',') REGEXP $regex";
+        }
 
-    //     $query .= "GROUP BY date";
-
-    //     $result = DB::select($query, $params);
-    //     return $result;
-    // }
+        $result = DB::select($query, $params);
+        return $result;
+    }
 
 }
