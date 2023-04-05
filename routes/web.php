@@ -38,6 +38,12 @@ Route::get("/tickets/creationtime/monthly", [ReportsController::class, 'getTicke
 Route::get("/firstreply/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeDaily']);
 Route::get("/firstreply/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeWeekly']);
 Route::get("/firstreply/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeMonthly']);
+Route::get("/resolutiontime/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeDaily']);
+Route::get("/resolutiontime/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeWeekly']);
+Route::get("/resolutiontime/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
+Route::get("/creationtime/average/daily", [ReportsController::class, 'getAverageTicketCreationTimeDaily']);
+Route::get("/resolutiontime/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeWeekly']);
+Route::get("/resolutiontime/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
 
 
 

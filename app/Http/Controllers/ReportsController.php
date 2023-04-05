@@ -59,12 +59,12 @@ class ReportsController extends Controller
         $cur_date = new DateTime("@$cur_time");
         $mapping = [];
 
-        for($week = 0; $week<$weeks; $week++){
+        for ($week = 0; $week < $weeks; $week++) {
             $cur_week_end_date = clone $cur_date;
             $cur_week_start_date = clone $cur_date;
             $cur_week_start_date->sub(new DateInterval('P6D'));
-            $value = $cur_week_start_date->format('Mj') ."-". $cur_week_end_date->format('M j');
-            for($day = 0; $day < 7; $day++){
+            $value = $cur_week_start_date->format('Mj') . "-" . $cur_week_end_date->format('M j');
+            for ($day = 0; $day < 7; $day++) {
                 $mapping[$cur_date->format('Mj')] = $value;
                 $cur_date->sub(new DateInterval('P1D'));
             }
@@ -206,5 +206,80 @@ class ReportsController extends Controller
             $result[$key]['median'] = $this->getMedian($values);
         }
         dd($result);
+    }
+
+    function getAverageAndMedianOfResolutionTimeDaily(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketResolutionTimesByDate(150);
+        // dd(strtotime($tickets[0]->ticket_date));
+        $tickets_by_days = [];
+        foreach ($tickets as $ticket) {
+            $timestamp = strtotime($ticket->ticket_date);
+            $date = date('M', $timestamp) . date('d', $timestamp);
+            $tickets_by_days[$date][] = $ticket->resolution_time;
+        }
+        // dd($tickets_by_days);
+        $result = [];
+        foreach ($tickets_by_days as $key => $values) {
+            $result[$key]['average'] = $this->getAverage($values);
+            $result[$key]['median'] = $this->getMedian($values);
+        }
+        dd($result);
+    }
+
+    function getAverageAndMedianOfResolutionTimeWeekly(Request $request)
+    {
+        $days_to_week_mapping = $this->getDaysToWeeksMapping(21);
+        $tickets = $this->unresolvedTicketRepository->getTicketResolutionTimesByDate(147);
+
+        $tickets_by_weeks = [];
+        foreach ($tickets as $ticket) {
+            $timestamp = strtotime($ticket->ticket_date);
+            $date = date('M', $timestamp) . date('j', $timestamp);
+            $tickets_by_weeks[$days_to_week_mapping[$date]][] = $ticket->resolution_time;
+        }
+        // dd($tickets_by_days);
+        $result = [];
+        foreach ($tickets_by_weeks as $key => $values) {
+            $result[$key]['average'] = $this->getAverage($values);
+            $result[$key]['median'] = $this->getMedian($values);
+        }
+        dd($result);
+    }
+
+    function getAverageAndMedianOfResolutionTimeMonthly(Request $request)
+    {
+        $tickets = $this->unresolvedTicketRepository->getTicketResolutionTimesByDateForMonths(12);
+
+        $tickets_by_months = [];
+        foreach ($tickets as $ticket) {
+            $timestamp = strtotime($ticket->ticket_date);
+            $month = date('M', $timestamp);
+            $tickets_by_months[$month][] = $ticket->resolution_time;
+        }
+
+        $result = [];
+        foreach ($tickets_by_months as $key => $values) {
+            $result[$key]['average'] = $this->getAverage($values);
+            $result[$key]['median'] = $this->getMedian($values);
+        }
+        dd($result);
+    }
+
+    function getAverageTicketCreationTimeDaily()
+    {
+        $average_tickets_per_day = $this->unresolvedTicketRepository->getTicketsWithRespondedToAndClosedWithoutResponseByDay(30);
+        dd($average_tickets_per_day);
+    }
+
+    function getAverageTicketCreationTimeWeekly()
+    {
+
+        $days_to_week_mapping = $this->getDaysToWeeksMapping(21);
+        $average_tickets_per_day = $this->unresolvedTicketRepository->getTicketsWithRespondedToAndClosedWithoutResponseByDay(147);
+
+        $average_tickets_per_week
+        foreach($)
+        dd($tickets);
     }
 }

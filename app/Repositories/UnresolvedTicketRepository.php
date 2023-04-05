@@ -604,7 +604,7 @@ class UnresolvedTicketRepository
         $query = "SELECT ticket_date, TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time) as reply_time
                 FROM tickets_cache
                 WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $days DAY)";
-        
+
         if (isset($this->body['ticket_status_id'])) {
             $ticketStatusId = $this->body['ticket_status_id'];
             if (is_array($ticketStatusId)) {
@@ -661,7 +661,7 @@ class UnresolvedTicketRepository
         $query = "SELECT ticket_date, TIMESTAMPDIFF(MINUTE, ticket_date, ticket_first_reply_time) as reply_time
                 FROM tickets_cache
                 WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $months MONTH)";
-        
+
         if (isset($this->body['ticket_status_id'])) {
             $ticketStatusId = $this->body['ticket_status_id'];
             if (is_array($ticketStatusId)) {
@@ -712,4 +712,54 @@ class UnresolvedTicketRepository
         return $result;
     }
 
+    function getTicketResolutionTimesByDate($days)
+    {
+        $params = [];
+        $query = "SELECT ticket_date, TIMESTAMPDIFF(MINUTE, ticket_date, ticket_closed_date) as resolution_time
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $days DAY)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getTicketResolutionTimesByDateForMonths($months)
+    {
+        $params = [];
+        $query = "SELECT ticket_date, TIMESTAMPDIFF(MINUTE, ticket_date, ticket_closed_date) as resolution_time
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $months MONTH)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getTicketsWithRespondedToAndClosedWithoutResponseByDay($days)
+    {
+        $params = [];
+        $query = "SELECT DATE(ticket_date) as ticket_date,
+                    SUM(CASE WHEN ticket_agent_messages > 0 THEN 1 ELSE 0 END) AS responded_to,
+                    SUM(CASE WHEN ticket_closed_date IS NOT NULL AND ticket_agent_messages = 0 THEN 1 ELSE 0 END) as closed_without_response
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $days DAY)";
+
+        $query .= "GROUP BY DATE(ticket_date);";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    // function getTicketsWithRespondedToAndClosedWithoutResponseByMonth()
+    // {
+    //     $params = [];
+    //     $query = "SELECT DATE(ticket_date) AS ticket_date,
+    //     SUM(CASE WHEN ticket_agent_messages > 0 THEN 1 ELSE 0 END) AS responded_to,
+    //     SUM(CASE WHEN ticket_closed_date IS NOT NULL AND ticket_agent_messages = 0 THEN 1 ELSE 0 END) as closed_without_response
+    //     FROM tickets_cache";
+
+    //     $query .= "GROUP BY DATE(ticket_date);";
+
+    //     $result = DB::select($query, $params);
+    //     return $result;
+    // }
 }
