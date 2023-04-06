@@ -42,8 +42,8 @@ Route::get("/resolutiontime/average_and_median/daily", [ReportsController::class
 Route::get("/resolutiontime/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeWeekly']);
 Route::get("/resolutiontime/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
 Route::get("/creationtime/average/daily", [ReportsController::class, 'getAverageTicketCreationTimeDaily']);
-Route::get("/resolutiontime/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeWeekly']);
-Route::get("/resolutiontime/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
+Route::get("/creationtime/average/weekly", [ReportsController::class, 'getAverageTicketCreationTimeWeekly']);
+Route::get("/creationtime/average/monthly", [ReportsController::class, 'getAverageTicketCreationTimeMonthly']);
 
 
 

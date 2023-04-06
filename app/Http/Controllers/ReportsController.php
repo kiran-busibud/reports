@@ -38,9 +38,12 @@ class ReportsController extends Controller
         return $median;
     }
 
-    public function getAverage(array $data)
+    public function getAverage(array $data, int $count = null)
     {
-        $count = count($data);
+        if ($count == null) {
+            $count = count($data);
+        }
+
         $sum = 0;
 
         if ($count == 0)
@@ -269,17 +272,64 @@ class ReportsController extends Controller
     function getAverageTicketCreationTimeDaily()
     {
         $average_tickets_per_day = $this->unresolvedTicketRepository->getTicketsWithRespondedToAndClosedWithoutResponseByDay(30);
-        dd($average_tickets_per_day);
+
+        $result = [];
+
+        foreach ($average_tickets_per_day as $day) {
+            $result[$day->ticket_date]['responded_to'] = $day->responded_to;
+            $result[$day->ticket_date]['closed_without_response'] = $day->closed_without_response;
+        }
+        dd($result);
     }
 
     function getAverageTicketCreationTimeWeekly()
     {
 
         $days_to_week_mapping = $this->getDaysToWeeksMapping(21);
-        $average_tickets_per_day = $this->unresolvedTicketRepository->getTicketsWithRespondedToAndClosedWithoutResponseByDay(147);
+        $tickets_per_day = $this->unresolvedTicketRepository->getTicketsWithRespondedToAndClosedWithoutResponseByDay(147);
 
-        $average_tickets_per_week
-        foreach($)
-        dd($tickets);
+        $tickets_by_weeks = [];
+
+        foreach ($tickets_per_day as $day) {
+
+            $timestamp = strtotime($day->ticket_date);
+            $date = date('M', $timestamp) . date('j', $timestamp);
+
+            $week = $days_to_week_mapping[$date];
+            $tickets_by_weeks[$week]['responded_to'][] = $day->responded_to;
+            $tickets_by_weeks[$week]['closed_without_response'][] = $day->closed_without_response;
+        }
+
+        $result = [];
+
+        foreach ($tickets_by_weeks as $key => $values) {
+
+            $result[$key]['responder_to'] = $this->getAverage($values['responded_to']);
+            $result[$key]['closed_without_response'] = $this->getAverage($values['closed_without_response']);
+        }
+
+        dd($result);
+    }
+
+    function getAverageTicketCreationTimeMonthly(Request $request)
+    {
+        $tickets_per_day = $this->unresolvedTicketRepository->getTicketsWithRespondedToAndClosedWithoutResponseByMonth(12);
+
+        $tickets_by_months = [];
+
+        foreach ($tickets_per_day as $day) {
+            $timestamp = strtotime($day->ticket_date);
+            $month = date('M', $timestamp);
+            $tickets_by_months[$month]['responded_to'][] = $day->responded_to;
+            $tickets_by_months[$month]['closed_without_response'][] = $day->closed_without_response;
+        }
+
+        $result = [];
+        foreach ($tickets_by_months as $key => $values) {
+            $result[$key]['responded_to'] = $this->getAverage($values['responded_to']);
+            $result[$key]['median'] = $this->getMedian($values['closed_without_response']);
+        }
+
+        dd($result);
     }
 }

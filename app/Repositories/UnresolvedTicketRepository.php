@@ -749,17 +749,18 @@ class UnresolvedTicketRepository
         return $result;
     }
 
-    // function getTicketsWithRespondedToAndClosedWithoutResponseByMonth()
-    // {
-    //     $params = [];
-    //     $query = "SELECT DATE(ticket_date) AS ticket_date,
-    //     SUM(CASE WHEN ticket_agent_messages > 0 THEN 1 ELSE 0 END) AS responded_to,
-    //     SUM(CASE WHEN ticket_closed_date IS NOT NULL AND ticket_agent_messages = 0 THEN 1 ELSE 0 END) as closed_without_response
-    //     FROM tickets_cache";
+    function getTicketsWithRespondedToAndClosedWithoutResponseByMonth($months)
+    {
+        $params = [];
+        $query = "SELECT DATE(ticket_date) as ticket_date,
+                    SUM(CASE WHEN ticket_agent_messages > 0 THEN 1 ELSE 0 END) AS responded_to,
+                    SUM(CASE WHEN ticket_closed_date IS NOT NULL AND ticket_agent_messages = 0 THEN 1 ELSE 0 END) as closed_without_response
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $months MONTH)";
 
-    //     $query .= "GROUP BY DATE(ticket_date);";
+        $query .= "GROUP BY DATE(ticket_date);";
 
-    //     $result = DB::select($query, $params);
-    //     return $result;
-    // }
+        $result = DB::select($query, $params);
+        return $result;
+    }
 }
