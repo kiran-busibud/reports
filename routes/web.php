@@ -53,6 +53,10 @@ Route::get("/closed/daily", [ReportsController::class, 'getTicketsClosedByTimeDa
 Route::get("/closed/weekly", [ReportsController::class, 'getTicketsClosedByTimeWeekly']);
 Route::get("/closed/monthly", [ReportsController::class, 'getTicketsClosedByTimeMonthly']);
 
+Route::get("/backlog/daily", [ReportsController::class, 'getBacklogTicketsDaily']);
+Route::get("/backlog/weekly", [ReportsController::class, 'getBacklogTicketsWeekly']);
+Route::get("/backlog/monthly", [ReportsController::class, 'getBacklogTicketsMonthly']);
+
 
 
 // Route::group(["prefix", "reports"], function(){ 

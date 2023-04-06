@@ -796,4 +796,38 @@ class UnresolvedTicketRepository
         $result = DB::select($query, $params);
         return $result;
     }
+
+    function getBacklogTicketsDaily($days)
+    {
+        $params = [];
+
+        $query = "SELECT DATE(ticket_date) as ticket_date,
+                    SUM(CASE WHEN ticket_closed_date IS NOT null AND TIMESTAMPDIFF(HOUR, ticket_date, ticket_closed_date) < 24 THEN 1 ELSE 0 END) AS closed,
+                    SUM(CASE WHEN ticket_closed_date IS null AND TIMESTAMPDIFF(HOUR, ticket_date, ticket_first_reply_time) < 24  THEN 1 ELSE 0 END) AS pending,
+                    count(*) AS total
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $days DAY)";
+
+        $query .= "GROUP BY DATE(ticket_date)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getBacklogTicketsMonthly($months)
+    {
+        $params = [];
+
+        $query = "SELECT DATE(ticket_date) as ticket_date,
+                    SUM(CASE WHEN ticket_closed_date IS NOT null AND TIMESTAMPDIFF(HOUR, ticket_date, ticket_closed_date) < 24 THEN 1 ELSE 0 END) AS closed,
+                    SUM(CASE WHEN ticket_closed_date IS null AND TIMESTAMPDIFF(HOUR, ticket_date, ticket_first_reply_time) < 24  THEN 1 ELSE 0 END) AS pending,
+                    count(*) AS total
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $months MONTH)";
+
+        $query .= "GROUP BY DATE(ticket_date)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
 }

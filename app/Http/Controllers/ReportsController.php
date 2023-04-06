@@ -404,4 +404,76 @@ class ReportsController extends Controller
         dd($result);
     }
 
+    function getBacklogTicketsDaily(Request $request)
+    {
+        $daily_backlog_tickets = $this->unresolvedTicketRepository->getBacklogTicketsDaily(150);
+
+        $result = [];
+
+        foreach ($daily_backlog_tickets as $day) {
+            $result[$day->ticket_date]['closed'] = ($day->closed/$day->total)*100;
+            $result[$day->ticket_date]['pending'] = ($day->pending/$day->total)*100;
+        }
+
+        dd($result);
+
+    }
+
+    function getBacklogTicketsWeekly(Request $request)
+    {
+        $daily_backlog_tickets = $this->unresolvedTicketRepository->getBacklogTicketsDaily(147);
+
+        // dd($daily_backlog_tickets);
+
+        $days_to_week_mapping = $this->getDaysToWeeksMapping(21);
+
+        $weekly_backlog_tickets = [];
+
+        foreach ($daily_backlog_tickets as $day) {
+
+            $timestamp = strtotime($day->ticket_date);
+            $date = date('M', $timestamp) . date('j', $timestamp);
+
+            $week = $days_to_week_mapping[$date];
+
+            $weekly_backlog_tickets[$week]['closed'][] = $day->closed;
+            $weekly_backlog_tickets[$week]['pending'][] = $day->pending;
+            $weekly_backlog_tickets[$week]['total'][] = $day->total;
+        }
+
+        $result = [];
+
+        foreach ($weekly_backlog_tickets as $key => $values) {
+            $total = array_sum($values['total']);
+            $result[$key]['closed'] = (array_sum($values['closed'])/$total)*100;
+            $result[$key]['pending'] = (array_sum($values['pending'])/$total)*100;
+        }
+
+        dd($result);
+
+    }
+
+    function getBacklogTicketsMonthly(Request $request)
+    {
+        $daily_backlog_tickets = $this->unresolvedTicketRepository->getBacklogTicketsMonthly(12);
+        $monthly_backlog_tickets = [];
+
+        foreach ($daily_backlog_tickets as $day) {
+            $timestamp = strtotime($day->ticket_date);
+            $month = date('M', $timestamp);
+            $monthly_backlog_tickets[$month]['closed'][] = $day->closed;
+            $monthly_backlog_tickets[$month]['pending'][] = $day->pending;
+            $monthly_backlog_tickets[$month]['total'][] = $day->total;
+        }
+
+        $result = [];
+
+        foreach ($monthly_backlog_tickets as $key => $values) {
+            $total = array_sum($values['total']);
+            $result[$key]['closed'] = (array_sum($values['closed'])/$total)*100;
+            $result[$key]['pending'] = (array_sum($values['pending'])/$total)*100;
+        }
+
+        dd($result);
+    }
 }
