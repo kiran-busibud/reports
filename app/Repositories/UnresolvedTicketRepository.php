@@ -763,4 +763,37 @@ class UnresolvedTicketRepository
         $result = DB::select($query, $params);
         return $result;
     }
+
+    function getTicketsClosedByTimeDaily($days)
+    {
+        $params = [];
+        $query = "SELECT DATE(ticket_closed_date) as ticket_closed_date,
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN ticket_agent_messages > 0 THEN 1 ELSE 0 END) AS responded_to,
+                    SUM(CASE WHEN ticket_agent_messages > 0 THEN 0 ELSE 1 END) AS closed_without_response
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $days DAY)";
+
+        $query .= "GROUP BY DATE(ticket_closed_date)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getTicketsClosedByTimeMonthly($months)
+    {
+        $params = [];
+
+        $query = "SELECT DATE(ticket_closed_date) as ticket_closed_date,
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN ticket_agent_messages > 0 THEN 1 ELSE 0 END) AS responded_to,
+                    SUM(CASE WHEN ticket_agent_messages > 0 THEN 0 ELSE 1 END) AS closed_without_response
+                FROM tickets_cache
+                WHERE ticket_date >= DATE_SUB(NOW(), INTERVAL $months MONTH)";
+
+        $query .= "GROUP BY DATE(ticket_closed_date)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
 }

@@ -32,18 +32,26 @@ Route::get('/tickets/notification', [ReportsController::class, 'getUnresolvedTic
 Route::get('/ticketIds/notification', [ReportsController::class, 'getUnresolvedTicketIdsForNotification']);
 Route::get('/tickets/replytime', [ReportsController::class, 'getTicketsByFirstReplyTimeBrackets']);
 Route::get("/tickets/resolutiontime", [ReportsController::class, 'getTicketsByResolutionTime']);
+
 Route::get("/tickets/creationtime/daily", [ReportsController::class, 'getTicketsByCreationTimeDaily']);
 Route::get("/tickets/creationtime/weekly", [ReportsController::class, 'getTicketsByCreationTimeWeekly']);
 Route::get("/tickets/creationtime/monthly", [ReportsController::class, 'getTicketsByCreationTimemonthly']);
+
 Route::get("/firstreply/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeDaily']);
 Route::get("/firstreply/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeWeekly']);
 Route::get("/firstreply/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeMonthly']);
+
 Route::get("/resolutiontime/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeDaily']);
 Route::get("/resolutiontime/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeWeekly']);
 Route::get("/resolutiontime/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
+
 Route::get("/creationtime/average/daily", [ReportsController::class, 'getAverageTicketCreationTimeDaily']);
 Route::get("/creationtime/average/weekly", [ReportsController::class, 'getAverageTicketCreationTimeWeekly']);
 Route::get("/creationtime/average/monthly", [ReportsController::class, 'getAverageTicketCreationTimeMonthly']);
+
+Route::get("/closed/daily", [ReportsController::class, 'getTicketsClosedByTimeDaily']);
+Route::get("/closed/weekly", [ReportsController::class, 'getTicketsClosedByTimeWeekly']);
+Route::get("/closed/monthly", [ReportsController::class, 'getTicketsClosedByTimeMonthly']);
 
 
 

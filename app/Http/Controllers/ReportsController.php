@@ -327,9 +327,81 @@ class ReportsController extends Controller
         $result = [];
         foreach ($tickets_by_months as $key => $values) {
             $result[$key]['responded_to'] = $this->getAverage($values['responded_to']);
-            $result[$key]['median'] = $this->getMedian($values['closed_without_response']);
+            $result[$key]['closed_without_response'] = $this->getMedian($values['closed_without_response']);
         }
 
         dd($result);
     }
+
+    function getTicketsClosedByTimeDaily(Request $request)
+    {
+        $tickets_closed_per_day = $this->unresolvedTicketRepository->getTicketsClosedByTimeDaily(150);
+
+        $result = [];
+
+        foreach ($tickets_closed_per_day as $day) {
+            $result[$day->ticket_closed_date]['responded_to'] = $day->responded_to;
+            $result[$day->ticket_closed_date]['closed_without_response'] = $day->closed_without_response;
+            $result[$day->ticket_closed_date]['total'] = $day->total;
+        }
+
+        dd($result);
+    }
+
+    function getTicketsClosedByTimeWeekly(Request $request)
+    {
+        $tickets_closed_per_day = $this->unresolvedTicketRepository->getTicketsClosedByTimeDaily(147);
+
+        $days_to_week_mapping = $this->getDaysToWeeksMapping(21);
+
+        $tickets_closed_by_weeks = [];
+
+        foreach ($tickets_closed_per_day as $day) {
+
+            $timestamp = strtotime($day->ticket_closed_date);
+            $date = date('M', $timestamp) . date('j', $timestamp);
+
+            $week = $days_to_week_mapping[$date];
+
+            $tickets_closed_by_weeks[$week]['responded_to'][] = $day->responded_to;
+            $tickets_closed_by_weeks[$week]['closed_without_response'][] = $day->closed_without_response;
+            $tickets_closed_by_weeks[$week]['total'][] = $day->total;
+        }
+
+        $result = [];
+
+        foreach ($tickets_closed_by_weeks as $key => $values) {
+            $result[$key]['responder_to'] = array_sum($values['responded_to']);
+            $result[$key]['closed_without_response'] = array_sum($values['closed_without_response']);
+            $result[$key]['total'] = array_sum($values['total']);
+        }
+
+        dd($result);
+
+    }
+
+    function getTicketsClosedByTimeMonthly(Request $request)
+    {
+        $tickets_closed_per_day = $this->unresolvedTicketRepository->getTicketsClosedByTimeMonthly(12);
+
+        $tickets_closed_by_month = [];
+
+        foreach ($tickets_closed_per_day as $day) {
+            $timestamp = strtotime($day->ticket_closed_date);
+            $month = date('M', $timestamp);
+            $tickets_closed_by_month[$month]['responded_to'][] = $day->responded_to;
+            $tickets_closed_by_month[$month]['closed_without_response'][] = $day->closed_without_response;
+            $tickets_closed_by_month[$month]['total'][] = $day->total;
+        }
+
+        $result = [];
+        foreach ($tickets_closed_by_month as $key => $values) {
+            $result[$key]['responded_to'] = array_sum($values['responded_to']);
+            $result[$key]['closed_without_response'] = array_sum($values['closed_without_response']);
+            $result[$key]['total'] = array_sum($values['total']);
+        }
+
+        dd($result);
+    }
+
 }
