@@ -432,7 +432,7 @@ class ReportsController extends Controller
         foreach ($daily_backlog_tickets as $day) {
 
             $timestamp = strtotime($day->ticket_date);
-            $date = date('M', $timestamp) . date('j', $timestamp);
+            $date = date('M', $timestamp) . date('j', $timestamp); 
 
             $week = $days_to_week_mapping[$date];
 

@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
-use routes\TicketRoutes;
+use App\Routes\ReportRoutes;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,57 +15,46 @@ use routes\TicketRoutes;
 |
 */
 
-// Route::get('/unresolved-tickets-by-channels', [TicketsController::class, 'getUnresolvedTicketsByChannels']);
-// Route::get('/unresolved-tickets-by-channels-listview', [TicketsController::class, 'getUnresolvedTicketsByChannelsListView']);
-// Route::get('/unresolvedTicketsByPendingTime', [TicketsController::class, 'getUnresolvedTicketsByPendingTime']);
-// Route::get('/unresolvedTicketsByPendingTimeListview', [TicketsController::class, 'getUnresolvedTicketsByPendingTimeListView']);
-// Route::get('/unresolvedTicketByMostBackAndForth', [TicketsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
 
-Route::get('/bychannels', [ReportsController::class, 'getUnresolvedTicketsByChannels']);
-Route::get('/bychannels/listview', [ReportsController::class, 'getUnresolvedTicketsByChannelsListview']);
-Route::get('/pendingtime', [ReportsController::class, 'getUnresolvedTicketsByPendingTime']);
-Route::get('/pendingtime/listview', [ReportsController::class, 'getUnresolvedTicketsByPendingTimeListview']);
-Route::get('/messages', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
-Route::get('/messages/listview', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForthListview']);
-Route::get('/tickets/notification', [ReportsController::class, 'getUnresolvedTicketsForNotification']);
-Route::get('/ticketIds/notification', [ReportsController::class, 'getUnresolvedTicketIdsForNotification']);
-Route::get('/tickets/replytime', [ReportsController::class, 'getTicketsByFirstReplyTimeBrackets']);
-Route::get("/tickets/resolutiontime", [ReportsController::class, 'getTicketsByResolutionTime']);
+// Route::get('/bychannels', [ReportsController::class, 'getUnresolvedTicketsByChannels']);
+// Route::get('/bychannels/listview', [ReportsController::class, 'getUnresolvedTicketsByChannelsListview']);
+// Route::get('/pendingtime', [ReportsController::class, 'getUnresolvedTicketsByPendingTime']);
 
-Route::get("/tickets/creationtime/daily", [ReportsController::class, 'getTicketsByCreationTimeDaily']);
-Route::get("/tickets/creationtime/weekly", [ReportsController::class, 'getTicketsByCreationTimeWeekly']);
-Route::get("/tickets/creationtime/monthly", [ReportsController::class, 'getTicketsByCreationTimemonthly']);
+// Route::get('/pendingtime/listview', [ReportsController::class, 'getUnresolvedTicketsByPendingTimeListview']);
+// Route::get('/messages', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
+// Route::get('/messages/listview', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForthListview']);
+// Route::get('/tickets/notification', [ReportsController::class, 'getUnresolvedTicketsForNotification']);
+// Route::get('/ticketIds/notification', [ReportsController::class, 'getUnresolvedTicketIdsForNotification']);
+// Route::get('/tickets/replytime', [ReportsController::class, 'getTicketsByFirstReplyTimeBrackets']);
+// Route::get("/tickets/resolutiontime", [ReportsController::class, 'getTicketsByResolutionTime']);
 
-Route::get("/firstreply/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeDaily']);
-Route::get("/firstreply/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeWeekly']);
-Route::get("/firstreply/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeMonthly']);
+// Route::get("/tickets/creationtime/daily", [ReportsController::class, 'getTicketsByCreationTimeDaily']);
+// Route::get("/tickets/creationtime/weekly", [ReportsController::class, 'getTicketsByCreationTimeWeekly']);
+// Route::get("/tickets/creationtime/monthly", [ReportsController::class, 'getTicketsByCreationTimemonthly']);
 
-Route::get("/resolutiontime/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeDaily']);
-Route::get("/resolutiontime/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeWeekly']);
-Route::get("/resolutiontime/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
+// Route::get("/firstreply/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeDaily']);
+// Route::get("/firstreply/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeWeekly']);
+// Route::get("/firstreply/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfFirstReplyTimeMonthly']);
 
-Route::get("/creationtime/average/daily", [ReportsController::class, 'getAverageTicketCreationTimeDaily']);
-Route::get("/creationtime/average/weekly", [ReportsController::class, 'getAverageTicketCreationTimeWeekly']);
-Route::get("/creationtime/average/monthly", [ReportsController::class, 'getAverageTicketCreationTimeMonthly']);
+// Route::get("/resolutiontime/average_and_median/daily", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeDaily']);
+// Route::get("/resolutiontime/average_and_median/weekly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeWeekly']);
+// Route::get("/resolutiontime/average_and_median/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
 
-Route::get("/closed/daily", [ReportsController::class, 'getTicketsClosedByTimeDaily']);
-Route::get("/closed/weekly", [ReportsController::class, 'getTicketsClosedByTimeWeekly']);
-Route::get("/closed/monthly", [ReportsController::class, 'getTicketsClosedByTimeMonthly']);
+// Route::get("/creationtime/average/daily", [ReportsController::class, 'getAverageTicketCreationTimeDaily']);
+// Route::get("/creationtime/average/weekly", [ReportsController::class, 'getAverageTicketCreationTimeWeekly']);
+// Route::get("/creationtime/average/monthly", [ReportsController::class, 'getAverageTicketCreationTimeMonthly']);
 
-Route::get("/backlog/daily", [ReportsController::class, 'getBacklogTicketsDaily']);
-Route::get("/backlog/weekly", [ReportsController::class, 'getBacklogTicketsWeekly']);
-Route::get("/backlog/monthly", [ReportsController::class, 'getBacklogTicketsMonthly']);
+// Route::get("/closed/daily", [ReportsController::class, 'getTicketsClosedByTimeDaily']);
+// Route::get("/closed/weekly", [ReportsController::class, 'getTicketsClosedByTimeWeekly']);
+// Route::get("/closed/monthly", [ReportsController::class, 'getTicketsClosedByTimeMonthly']);
+
+// Route::get("/backlog/daily", [ReportsController::class, 'getBacklogTicketsDaily']);
+// Route::get("/backlog/weekly", [ReportsController::class, 'getBacklogTicketsWeekly']);
+// Route::get("/backlog/monthly", [ReportsController::class, 'getBacklogTicketsMonthly']);
 
 
 
-// Route::group(["prefix", "reports"], function(){ 
-    
-//     //ticket reports
-//     Route::group(['prefix', "ticket"], function(){
+Route::prefix('reports')->group(function () {
 
-        
-
-//     });
-    
-// });
-// TicketRoutes::reportRoutes();
+    ReportRoutes::reportRoutes();
+});
