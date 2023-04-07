@@ -11,13 +11,22 @@ class ReportRoutes
     {
 
         Route::prefix('currentstatus')->group(function () {
-            
-            Route::get('/tickets-channels', [ReportsController::class, 'getUnresolvedTicketsByChannels']);
-            Route::get('/tickets-channels-listview', [ReportsController::class, 'getUnresolvedTicketsByChannelsListview']);
-            Route::get('/tickets-pendingtime', [ReportsController::class, 'getUnresolvedTicketsByPendingTime']);
-            Route::get('/tickets-pendingtime-listview', [ReportsController::class, 'getUnresolvedTicketsByPendingTimeListview']);
-            Route::get('/tickets-back-and-forth', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
-            Route::get('/tickets-back-and-forth-listview', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForthListview']);
+
+            Route::prefix('tickets-by-channels')->group(function(){
+                Route::get('/', [ReportsController::class, 'getUnresolvedTicketsByChannels']);
+                Route::get('/listview', [ReportsController::class, 'getUnresolvedTicketsByChannelsListview']);
+            });
+
+            Route::prefix('tickets-by-pendingtime')->group(function(){
+                Route::get('/', [ReportsController::class, 'getUnresolvedTicketsByPendingTime']);
+                Route::get('/listview', [ReportsController::class, 'getUnresolvedTicketsByPendingTimeListview']);
+            });
+        
+            Route::prefix('most-back-and-forth-tickets')->group(function(){
+                Route::get('/', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForth']);
+                Route::get('/listview', [ReportsController::class, 'getUnresolvedTicketsByMostBackAndForthListview']);
+            });
+
             Route::get('/unresolved-tickets-notification', [ReportsController::class, 'getUnresolvedTicketsForNotification']);
             Route::get('/unresolve-ticket-ids-notification', [ReportsController::class, 'getUnresolvedTicketIdsForNotification']);
         });

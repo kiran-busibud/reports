@@ -7,33 +7,12 @@ use Illuminate\Support\Facades\DB;
 class UnresolvedTicketRepository
 {
     protected $body = ['ticket_status_id' => [6, 4], 'ticket_tags' => [8, 101]];
-    function updateTickets(array $tickets, array $tag_mapping, array $message_mapping)
-    {
-        foreach ($tickets as $ticket) {
-            DB::table('tickets_cache')->insert([
-                'ticket_id' => $ticket->id,
-                'ticket_title' => $ticket->ticket_title,
-                'ticket_description' => $ticket->ticket_description,
-                'ticket_agent' => $ticket->ticket_agent,
-                'ticket_status_id' => $ticket->ticket_status_id,
-                'ticket_brand_id' => $ticket->ticket_brand_id,
-                'ticket_channel' => $ticket->ticket_channel,
-                'ticket_date' => $ticket->ticket_date,
-                'ticket_closed_date' => $ticket->ticket_closed_date ?? NULL,
-                'ticket_tags' => $tag_mapping[$ticket->id] ?? "",
-                'ticket_total_messages' => $message_mapping[$ticket->id]['total_messages'] ?? 0,
-                'ticket_agent_messages' => $message_mapping[$ticket->id]['agent_messages'] ?? 0,
-                'ticket_customer_messages' => $message_mapping[$ticket->id]['customer_messages'] ?? 0,
-                'ticket_first_reply_time' => $message_mapping[$ticket->id]['first_reply_time'],
-            ]);
-        }
-    }
 
-    function getUnresolvedTicketsByChannels()
+    public function addFilters()
     {
-        $query = "SELECT COUNT(*) as count,ticket_channel, ticket_status_id FROM tickets_cache WHERE 1 = 1";
 
         $params = [];
+        $query = "";
 
         if (isset($this->body['ticket_status_id'])) {
             $ticketStatusId = $this->body['ticket_status_id'];
@@ -81,6 +60,39 @@ class UnresolvedTicketRepository
             $query .= " AND CONCAT(',', ticket_tags  , ',') REGEXP $regex";
         }
 
+        return array($query, $params);
+    }
+    function updateTickets(array $tickets, array $tag_mapping, array $message_mapping)
+    {
+        foreach ($tickets as $ticket) {
+            DB::table('tickets_cache')->insert([
+                'ticket_id' => $ticket->id,
+                'ticket_title' => $ticket->ticket_title,
+                'ticket_description' => $ticket->ticket_description,
+                'ticket_agent' => $ticket->ticket_agent,
+                'ticket_status_id' => $ticket->ticket_status_id,
+                'ticket_brand_id' => $ticket->ticket_brand_id,
+                'ticket_channel' => $ticket->ticket_channel,
+                'ticket_date' => $ticket->ticket_date,
+                'ticket_closed_date' => $ticket->ticket_closed_date,
+                'ticket_tags' => $tag_mapping[$ticket->id] ?? "",
+                'ticket_total_messages' => $message_mapping[$ticket->id]['total_messages'] ?? 0,
+                'ticket_agent_messages' => $message_mapping[$ticket->id]['agent_messages'] ?? 0,
+                'ticket_customer_messages' => $message_mapping[$ticket->id]['customer_messages'] ?? 0,
+                'ticket_first_reply_time' => $message_mapping[$ticket->id]['first_reply_time'],
+            ]);
+        }
+    }
+
+    function getUnresolvedTicketsByChannels()
+    {
+        $query = "SELECT COUNT(*) as count,ticket_channel, ticket_status_id FROM tickets_cache WHERE 1 = 1";
+
+        $params = [];
+
+        list($filters_query, $params) = $this->addFilters();
+
+        $query .= $filters_query;
         $query .= " GROUP BY ticket_channel, ticket_status_id";
         // dd($query);
         // dd($params);
