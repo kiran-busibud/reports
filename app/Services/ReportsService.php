@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Repositories\LiveChatRepository;
 use App\Repositories\TicketRepository;
 use App\Repositories\TicketMetaRepository;
 use App\Repositories\UnresolvedTicketRepository;
@@ -11,13 +12,15 @@ class ReportsService
 
     protected $ticketRepository;
     protected $ticketMetaRepository;
+    protected $liveChatRepository;
 
     protected $unresolvedTicketRepository;
-    public function __construct(TicketRepository $ticketRepository, TicketMetaRepository $ticketMetaRepository, UnresolvedTicketRepository $unresolvedTicketRepository)
+    public function __construct(TicketRepository $ticketRepository, TicketMetaRepository $ticketMetaRepository, UnresolvedTicketRepository $unresolvedTicketRepository, LiveChatRepository $liveChatRepository)
     {
         $this->ticketRepository = $ticketRepository;
         $this->ticketMetaRepository = $ticketMetaRepository;
         $this->unresolvedTicketRepository = $unresolvedTicketRepository;
+        $this->liveChatRepository = $liveChatRepository;
     }
 
     function getTagMapper(array $tags)
@@ -45,6 +48,17 @@ class ReportsService
         return $message_mapping;
     }
 
+    function getMetaMapping(array $values)
+    {
+        $meta_mapping = [];
+
+        foreach($values as $value) {
+
+            $meta_mapping[$value->request_id][$value->meta_key] = $value->meta_value;
+        }
+
+        return $meta_mapping;
+    }
     function cacheTickets()
     {
 
@@ -60,5 +74,20 @@ class ReportsService
 
         $this->unresolvedTicketRepository->updateTickets($tickets, $tag_mapping, $message_mapping);
 
+    }
+
+    function cacheLiveChats()
+    {
+        $live_chats = $this->liveChatRepository->getLiveChatRequests();
+
+        // dd($live_chats);
+
+        $meta_data = $this->liveChatRepository->getMetaData();
+
+        $meta_data = $this->getMetaMapping($meta_data);
+
+        // dd($meta_data);
+
+        $this->liveChatRepository->updateLiveChatsData($live_chats, $meta_data);
     }
 }
