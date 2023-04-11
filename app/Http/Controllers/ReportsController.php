@@ -415,8 +415,8 @@ class ReportsController extends Controller
         $result = [];
 
         foreach ($daily_backlog_tickets as $day) {
-            $result[$day->ticket_date]['closed'] = ($day->closed/$day->total)*100;
-            $result[$day->ticket_date]['pending'] = ($day->pending/$day->total)*100;
+            $result[$day->ticket_date]['closed'] = ($day->closed / $day->total) * 100;
+            $result[$day->ticket_date]['pending'] = ($day->pending / $day->total) * 100;
         }
 
         dd($result);
@@ -436,7 +436,7 @@ class ReportsController extends Controller
         foreach ($daily_backlog_tickets as $day) {
 
             $timestamp = strtotime($day->ticket_date);
-            $date = date('M', $timestamp) . date('j', $timestamp); 
+            $date = date('M', $timestamp) . date('j', $timestamp);
 
             $week = $days_to_week_mapping[$date];
 
@@ -449,8 +449,8 @@ class ReportsController extends Controller
 
         foreach ($weekly_backlog_tickets as $key => $values) {
             $total = array_sum($values['total']);
-            $result[$key]['closed'] = (array_sum($values['closed'])/$total)*100;
-            $result[$key]['pending'] = (array_sum($values['pending'])/$total)*100;
+            $result[$key]['closed'] = (array_sum($values['closed']) / $total) * 100;
+            $result[$key]['pending'] = (array_sum($values['pending']) / $total) * 100;
         }
 
         dd($result);
@@ -474,8 +474,8 @@ class ReportsController extends Controller
 
         foreach ($monthly_backlog_tickets as $key => $values) {
             $total = array_sum($values['total']);
-            $result[$key]['closed'] = (array_sum($values['closed'])/$total)*100;
-            $result[$key]['pending'] = (array_sum($values['pending'])/$total)*100;
+            $result[$key]['closed'] = (array_sum($values['closed']) / $total) * 100;
+            $result[$key]['pending'] = (array_sum($values['pending']) / $total) * 100;
         }
 
         dd($result);
@@ -484,6 +484,58 @@ class ReportsController extends Controller
     function getTotalChatsDaily(Request $request)
     {
         $chats_by_days = $this->liveChatRepository->getTotalChatsDaily();
-        dd($chats_by_days);
+        // dd($chats_by_days);
+
+        $result = [];
+
+        foreach ($chats_by_days as $day) {
+            $result[$day->created_at]['chat_count'] = $day->chat_count;
+        }
+
+        dd($result);
+    }
+
+    function getTotalChatsWeekly(Request $request)
+    {
+        $start_date = new DateTime('2022-08-08');
+        $end_date = new DateTime('2023-05-01');
+
+        $chats_by_days = $this->liveChatRepository->getTotalChatsDaily();
+
+        $daily_chats = [];
+
+        foreach ($chats_by_days as $day) {
+            $daily_chats[date($day->created_at)]['chat_count'] = $day->chat_count;
+        }
+
+        // dd($daily_chats);
+
+        $weekly_chats = [];
+        $cur_date = clone $start_date;
+        while ($cur_date <= $end_date) {
+            // dd($cur_date);
+
+            $day = $cur_date->format('j');
+            $month = $cur_date->format('M');
+
+            $cur_week = $day . ' ' . substr($month, 0, 3);
+            $weekly_chats[$cur_week] = 0;
+
+            for ($day = 0; $day < 7 && $cur_date <= $end_date; $day++) {
+                $cur_date_string = $cur_date->format('Y-m-d');
+                if (isset($daily_chats[$cur_date_string])) {
+                    $weekly_chats[$cur_week] += $daily_chats[$cur_date_string]['chat_count'];
+                }
+                $cur_date->modify('+1 day');
+            }
+        }
+
+        dd($weekly_chats);
+    }
+
+    function getTotalChatsMonthly(Request $request)
+    {
+        $monthly_chats = $this->liveChatRepository->getTotalChatsMonthly();
+        dd($monthly_chats);
     }
 }

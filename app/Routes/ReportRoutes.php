@@ -81,6 +81,8 @@ class ReportRoutes
 
             Route::prefix('totalchats')->group(function(){
                 Route::get("/daily", [ReportsController::class, 'getTotalChatsDaily']);
+                Route::get("/weekly", [ReportsController::class, 'getTotalChatsWeekly']);
+                Route::get("/monthly", [ReportsController::class, 'getTotalChatsMonthly']);
             });
         });
     }
