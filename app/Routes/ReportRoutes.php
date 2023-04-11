@@ -76,6 +76,13 @@ class ReportRoutes
                 Route::get("/monthly", [ReportsController::class, 'getAverageAndMedianOfResolutionTimeMonthly']);
             });
         });
+
+        Route::prefix('livechats')->group(function(){
+
+            Route::prefix('totalchats')->group(function(){
+                Route::get("/daily", [ReportsController::class, 'getTotalChatsDaily']);
+            });
+        });
     }
     
 }

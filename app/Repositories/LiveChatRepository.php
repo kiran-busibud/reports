@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 class LiveChatRepository
 {
 
+    protected $body = ['start_date'=>'2023-03-02', 'end_date'=>'2023-03-11'];
 
     function getMetaData()
     {
@@ -44,5 +45,37 @@ class LiveChatRepository
                 'resolved' => $meta_data[$live_chat->id]['resolved'] ?? 0,
             ]);
         }
+    }
+
+    function getTotalChatsDaily()
+    {
+        $params = [];
+        $query = "SELECT DATE(created_at) AS created_at,COUNT(ID) AS chat_count
+        FROM live_chats_cache
+        WHERE 1=1";
+
+        if (isset($this->body['start_date']) && isset($this->body['end_date'])) {
+            $start_date = $this->body['start_date'];
+            $end_date = $this->body['end_date'];
+            
+            $query .= "AND created_at BETWEEN $this->body['start_date'] AND $this->body['start_date']";
+            // $params[] = $this->body['start_date'];
+            // $params[] = $this->body['end_date'];
+        }
+
+        if (isset($this->body['chat_status'])) {
+            $query .= "AND assigned = $this->body['chat_status']";
+        }
+
+        if (isset($this->body['assignment'])) {
+            $query .= "AND assigned_agent_id IS NOT NULL";
+        }
+
+        $query .= " GROUP BY DATE(created_at)
+                    ORDER BY DATE(created_at)";
+        dd($query);
+
+        $result = DB::select($query, $params);
+        return $result;
     }
 }

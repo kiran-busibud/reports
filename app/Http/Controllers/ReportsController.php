@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\UnresolvedTicketRepository;
+use App\Repositories\LiveChatRepository;
 use DateTime;
 use DateInterval;
 
@@ -11,9 +12,12 @@ class ReportsController extends Controller
 {
     protected $unresolvedTicketRepository;
 
-    public function __construct(UnresolvedTicketRepository $unresolvedTicketRepository)
+    protected $liveChatRepository;
+
+    public function __construct(UnresolvedTicketRepository $unresolvedTicketRepository, LiveChatRepository $liveChatRepository)
     {
         $this->unresolvedTicketRepository = $unresolvedTicketRepository;
+        $this->liveChatRepository = $liveChatRepository;
     }
 
     public function getMedian(array $data)
@@ -475,5 +479,11 @@ class ReportsController extends Controller
         }
 
         dd($result);
+    }
+
+    function getTotalChatsDaily(Request $request)
+    {
+        $chats_by_days = $this->liveChatRepository->getTotalChatsDaily();
+        dd($chats_by_days);
     }
 }
