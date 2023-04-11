@@ -83,6 +83,7 @@ class ReportRoutes
                 Route::get("/daily", [ReportsController::class, 'getTotalChatsDaily']);
                 Route::get("/weekly", [ReportsController::class, 'getTotalChatsWeekly']);
                 Route::get("/monthly", [ReportsController::class, 'getTotalChatsMonthly']);
+                Route::get("/heatmap", [ReportsController::class, 'getTotalChatsHeatmap']);
             });
         });
     }

@@ -535,7 +535,75 @@ class ReportsController extends Controller
 
     function getTotalChatsMonthly(Request $request)
     {
-        $monthly_chats = $this->liveChatRepository->getTotalChatsMonthly();
+        $start_date = new DateTime('2022-08-08');
+        $end_date = new DateTime('2023-05-01');
+
+        $chats_by_months = $this->liveChatRepository->getTotalChatsMonthly();
+
+        $monthly_chats = [];
+        foreach ($chats_by_months as $month) {
+            $monthly_chats[$month->created_at]['chat_count'] = $month->chat_count;
+        }
+
+        $cur_date = clone $start_date;
+        while ($cur_date <= $end_date) {
+            $cur_month = $cur_date->format('F Y');
+            if (!isset($monthly_chats[$cur_month])) {
+                $monthly_chats[$cur_month]['chat_count'] = 0;
+            }
+
+            $cur_date->add(new DateInterval('P1M'));
+        }
+
         dd($monthly_chats);
+    }
+
+    function getTimeSegmentFromHours(int $hours): string
+    {
+        $time = "";
+        $hours -= $hours%3;
+        if ($hours < 12) {
+            $time = $hours != 0 ? "$hours:00 AM" : "12:00 AM";
+        } else {
+            $time = "" . ($hours - 12) . ":00 PM";
+        }
+        return $time;
+    }
+
+    function getTotalChatsHeatmap(Request $request)
+    {
+        $start_date = new DateTime('2023-03-04');
+        $end_date = new DateTime('2023-03-11');
+
+        $chats_by_time = $this->liveChatRepository->getChatsByTime();
+
+        // dd($chats_by_time);
+
+        $chats_heatmap = [];
+
+        $cur_date = clone $start_date;
+        while ($cur_date <= $end_date) {
+            $date = $cur_date->format('d m Y');
+            for ($hrs = 0; $hrs < 24; $hrs += 3) {
+                $chats_heatmap[$date][$this->getTimeSegmentFromHours($hrs)] = 0;
+            }
+
+            $cur_date->modify('+1 day');
+        }
+
+        // dd($chats_heatmap);
+
+        foreach ($chats_by_time as $chat) {
+            $datetime = new DateTime($chat->created_at);
+
+            $date = $datetime->format('d m Y');
+            $hours = $datetime->format('H');
+
+            $time_segment = $this->getTimeSegmentFromHours($hours);
+
+            $chats_heatmap[$date][$time_segment] += 1;
+
+        }
+        dd($chats_heatmap);
     }
 }
