@@ -572,8 +572,8 @@ class ReportsController extends Controller
 
     function getTotalChatsHeatmap(Request $request)
     {
-        $start_date = new DateTime('2023-03-04');
-        $end_date = new DateTime('2023-03-11');
+        $start_date = new DateTime('2022-03-04');
+        $end_date = new DateTime('2023-04-11');
 
         $chats_by_time = $this->liveChatRepository->getChatsByTime();
 
@@ -605,5 +605,89 @@ class ReportsController extends Controller
 
         }
         dd($chats_heatmap);
+    }
+
+    function getMissedChatsDaily(Request $request)
+    {
+        $start_date = new DateTime('2023-01-04');
+        $end_date = new DateTime('2023-04-11');
+
+        $missed_chats_daily = $this->liveChatRepository->getMissedChatsDaily();
+        
+        $result = [];
+
+        $cur_date = clone $start_date;
+        while($cur_date <= $end_date){
+            $date = $cur_date->format('Y-m-d');
+            $result[$date]['chat_count']=0;
+            $cur_date->modify('+1 day');
+        }
+
+        foreach ($missed_chats_daily as $day) {
+            $result[$day->created_at]['chat_count'] += $day->chat_count;
+        }
+
+        dd($result);
+    }
+
+    function getMissedChatsWeekly(Request $request)
+    {
+        $start_date = new DateTime('2022-08-08');
+        $end_date = new DateTime('2023-05-01');
+
+        $chats_by_days = $this->liveChatRepository->getMissedChatsDaily();
+
+        $daily_chats = [];
+
+        foreach ($chats_by_days as $day) {
+            $daily_chats[date($day->created_at)]['chat_count'] = $day->chat_count;
+        }
+
+
+        $weekly_chats = [];
+        $cur_date = clone $start_date;
+        while ($cur_date <= $end_date) {
+
+            $day = $cur_date->format('j');
+            $month = $cur_date->format('M');
+
+            $cur_week = $day . ' ' . substr($month, 0, 3);
+            $weekly_chats[$cur_week]['missed_chats'] = 0;
+
+            for ($day = 0; $day < 7 && $cur_date <= $end_date; $day++) {
+                $cur_date_string = $cur_date->format('Y-m-d');
+                if (isset($daily_chats[$cur_date_string])) {
+                    $weekly_chats[$cur_week]['missed_chats'] += $daily_chats[$cur_date_string]['chat_count'];
+                }
+                $cur_date->modify('+1 day');
+            }
+        }
+
+        dd($weekly_chats);
+    }
+
+    function getMissedChatsMonthly(Request $request)
+    {
+        $start_date = new DateTime('2022-08-08');
+        $end_date = new DateTime('2023-05-01');
+
+        $chats_by_months = $this->liveChatRepository->getMissedChatsMonthly();
+
+        $monthly_chats = [];
+        foreach ($chats_by_months as $month) {
+            $monthly_chats[$month->created_at]['chat_count'] = $month->chat_count;
+        }
+
+        $cur_date = clone $start_date;
+        while ($cur_date <= $end_date) {
+            $cur_month = $cur_date->format('F Y');
+            if (!isset($monthly_chats[$cur_month])) {
+                $monthly_chats[$cur_month]['chat_count'] = 0;
+            }
+
+            $cur_date->add(new DateInterval('P1M'));
+        }
+
+        dd($monthly_chats);
     }
 }

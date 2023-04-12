@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 class LiveChatRepository
 {
 
-    protected $body = ['start_date' => '2023-03-04 00:00:00', 'end_date' => '2023-03-11 23:59:59'];
+    protected $body = ['start_date' => '2023-01-01 00:00:00', 'end_date' => '2023-04-11 23:59:59'];
 
     function getMetaData()
     {
@@ -59,15 +59,23 @@ class LiveChatRepository
             $start_date = date($this->body['start_date']);
             $end_date = date($this->body['end_date']);
 
-            $query .= "AND created_at BETWEEN '$start_date' AND '$end_date'";
+            $query .= " AND created_at BETWEEN '$start_date' AND '$end_date'";
         }
 
         if (isset($this->body['chat_status'])) {
-            $query .= "AND assigned = $this->body['chat_status']";
+            $query .= " AND assigned = $this->body['chat_status']";
         }
 
         if (isset($this->body['assignment'])) {
-            $query .= "AND assigned_agent_id IS NOT NULL";
+            $query .= " AND assigned_agent_id IS NOT NULL";
+        }
+
+        if (isset($this->body['agents'])) {
+            $agents = $this->body['agents'];
+            $regex = '(' . implode('|', $agents) . ')';
+            $regex = ',' . $regex . ',';
+            $regex = "'" . $regex . "'";
+            $query .= " AND CONCAT(',', assigned_agent_id  , ',') REGEXP $regex";
         }
 
         $query .= " GROUP BY DATE(created_at)
@@ -90,15 +98,23 @@ class LiveChatRepository
             $start_date = date($this->body['start_date']);
             $end_date = date($this->body['end_date']);
 
-            $query .= "AND created_at BETWEEN '$start_date' AND '$end_date'";
+            $query .= " AND created_at BETWEEN '$start_date' AND '$end_date'";
         }
 
         if (isset($this->body['chat_status'])) {
-            $query .= "AND assigned = $this->body['chat_status']";
+            $query .= " AND assigned = $this->body['chat_status']";
         }
 
         if (isset($this->body['assignment'])) {
-            $query .= "AND assigned_agent_id IS NOT NULL";
+            $query .= " AND assigned_agent_id IS NOT NULL";
+        }
+
+        if (isset($this->body['agents'])) {
+            $agents = $this->body['agents'];
+            $regex = '(' . implode('|', $agents) . ')';
+            $regex = ',' . $regex . ',';
+            $regex = "'" . $regex . "'";
+            $query .= " AND CONCAT(',', assigned_agent_id  , ',') REGEXP $regex";
         }
 
         $query .= " GROUP BY DATE_FORMAT(created_at, '%M %Y')
@@ -120,15 +136,23 @@ class LiveChatRepository
             $start_date = date($this->body['start_date']);
             $end_date = date($this->body['end_date']);
 
-            $query .= "AND created_at BETWEEN '$start_date' AND '$end_date'";
+            $query .= " AND created_at BETWEEN '$start_date' AND '$end_date'";
         }
 
         if (isset($this->body['chat_status'])) {
-            $query .= "AND assigned = $this->body['chat_status']";
+            $query .= " AND assigned = $this->body['chat_status']";
         }
 
         if (isset($this->body['assignment'])) {
-            $query .= "AND assigned_agent_id IS NOT NULL";
+            $query .= " AND assigned_agent_id IS NOT NULL";
+        }
+
+        if (isset($this->body['agents'])) {
+            $agents = $this->body['agents'];
+            $regex = '(' . implode('|', $agents) . ')';
+            $regex = ',' . $regex . ',';
+            $regex = "'" . $regex . "'";
+            $query .= " AND CONCAT(',', assigned_agent_id  , ',') REGEXP $regex";
         }
 
         $query .= "ORDER BY created_at";
@@ -137,5 +161,81 @@ class LiveChatRepository
         $result = DB::select($query, $params);
         return $result;
 
+    }
+
+    function getMissedChatsDaily()
+    {
+        $params = [];
+        $query = "SELECT DATE(created_at) AS created_at,COUNT(ID) AS chat_count
+        FROM live_chats_cache
+        WHERE general_status = 2";
+
+        if (isset($this->body['start_date']) && isset($this->body['end_date'])) {
+            $start_date = date($this->body['start_date']);
+            $end_date = date($this->body['end_date']);
+
+            $query .= " AND created_at BETWEEN '$start_date' AND '$end_date'";
+        }
+
+        if (isset($this->body['chat_status'])) {
+            $query .= " AND assigned = $this->body['chat_status']";
+        }
+
+        if (isset($this->body['assignment'])) {
+            $query .= " AND assigned_agent_id IS NOT NULL";
+        }
+
+        if (isset($this->body['agents'])) {
+            $agents = $this->body['agents'];
+            $regex = '(' . implode('|', $agents) . ')';
+            $regex = ',' . $regex . ',';
+            $regex = "'" . $regex . "'";
+            $query .= " AND CONCAT(',', assigned_agent_id  , ',') REGEXP $regex";
+        }
+
+        $query .= " GROUP BY DATE(created_at)
+            ORDER BY DATE(created_at)";
+
+        $result = DB::select($query, $params);
+        return $result;
+    }
+
+    function getMissedChatsMonthly()
+    {
+        $params = [];
+        $query = "SELECT DATE_FORMAT(created_at, '%M %Y') AS created_at,
+                        COUNT(ID) AS chat_count 
+                FROM live_chats_cache 
+                WHERE general_status = 2 ";
+
+        if (isset($this->body['start_date']) && isset($this->body['end_date'])) {
+            $start_date = date($this->body['start_date']);
+            $end_date = date($this->body['end_date']);
+
+            $query .= " AND created_at BETWEEN '$start_date' AND '$end_date'";
+        }
+
+        if (isset($this->body['chat_status'])) {
+            $query .= " AND assigned = $this->body['chat_status']";
+        }
+
+        if (isset($this->body['assignment'])) {
+            $query .= " AND assigned_agent_id IS NOT NULL";
+        }
+
+        if (isset($this->body['agents'])) {
+            $agents = $this->body['agents'];
+            $regex = '(' . implode('|', $agents) . ')';
+            $regex = ',' . $regex . ',';
+            $regex = "'" . $regex . "'";
+            $query .= " AND CONCAT(',', assigned_agent_id  , ',') REGEXP $regex";
+        }
+
+        $query .= " GROUP BY DATE_FORMAT(created_at, '%M %Y')
+                    ORDER BY MONTH(created_at)";
+        // dd($query);
+
+        $result = DB::select($query, $params);
+        return $result;
     }
 }

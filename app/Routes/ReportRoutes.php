@@ -85,6 +85,12 @@ class ReportRoutes
                 Route::get("/monthly", [ReportsController::class, 'getTotalChatsMonthly']);
                 Route::get("/heatmap", [ReportsController::class, 'getTotalChatsHeatmap']);
             });
+
+            Route::prefix('missedchats')->group(function(){
+                Route::get("/daily", [ReportsController::class, 'getMissedChatsDaily']);
+                Route::get("/weekly", [ReportsController::class, 'getMissedChatsWeekly']);
+                Route::get("/monthly", [ReportsController::class, 'getMissedChatsMonthly']);
+            });
         });
     }
     

@@ -42,7 +42,7 @@ class ReportsService
             $data['agent_messages'] = $message->agent_messages;
             $data['customer_messages'] = $message->customer_messages;
             $data['first_reply_time'] = $message->first_reply_time;
-            
+
             $message_mapping[$message->message_ticket_id] = $data;
         }
         return $message_mapping;
@@ -52,7 +52,7 @@ class ReportsService
     {
         $meta_mapping = [];
 
-        foreach($values as $value) {
+        foreach ($values as $value) {
 
             $meta_mapping[$value->request_id][$value->meta_key] = $value->meta_value;
         }
@@ -79,6 +79,11 @@ class ReportsService
     function cacheLiveChats()
     {
         $live_chats = $this->liveChatRepository->getLiveChatRequests();
+
+        foreach ($live_chats as $livechat) {
+            $agents = $livechat->assigned_agent_id;
+            $livechat->assigned_agent_id = $agents != NULL ? implode(",", unserialize($livechat->assigned_agent_id)) : NULL;
+        }
 
         // dd($live_chats);
 
