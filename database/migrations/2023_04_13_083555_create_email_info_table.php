@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('live_chats_cache', function (Blueprint $table) {
-            $table->tinyInteger('general_status')->length(4);
+        Schema::create('email_info', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->text('payload');
+            $table->boolean('is_processed');
+            $table->tinyInteger('fail_count');
+            $table->boolean('is_deleted');
         });
     }
 
@@ -21,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('live_chats_cache', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('email_info');
     }
 };
