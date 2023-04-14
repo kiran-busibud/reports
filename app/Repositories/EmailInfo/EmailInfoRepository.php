@@ -5,7 +5,7 @@
  * 
  * @author Maninderjit Singh <maninder@zinosi.com>
  */
-namespace App\Repositories\EmailInfoRepository;
+namespace App\Repositories\EmailInfo;
 
 use App\Entities\EmailInfo\EmailInfoMetaEntity;
 use App\Entities\EmailInfo\EmailInfoEntity;
@@ -75,10 +75,10 @@ class EmailInfoRepository implements IEmailInfoRepository
         $keys = $this->separateEntityAndMeta($payload);
 
         //create instance of EmailInfoEntity with the passed data
-        $message = EmailInfoEntity::makeInstance($keys['entityData']);
+        $emailInfo = EmailInfoEntity::makeInstance($keys['entityData']);
         
         //get the id of the saved EmailInfoEntity
-        $insertionId = $this->EmailInfoMapper->add($message);
+        $insertionId = $this->EmailInfoMapper->add($emailInfo);
 
 
         //check if there is any insertion id
@@ -87,9 +87,9 @@ class EmailInfoRepository implements IEmailInfoRepository
             return false;
         }
 
-        //check if the metaData is present in the passed message data
+        //check if the metaData is present in the passed emailInfo data
         if(!empty($keys['metaData'])){
-            //metaData is present, so add the meta data for the particular message
+            //metaData is present, so add the meta data for the particular emailInfo
 
             //iterate over all the meta data and persist the meta data
             foreach($keys['metaData'] as $metaKey => $metaValue){

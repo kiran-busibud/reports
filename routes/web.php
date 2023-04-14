@@ -3,6 +3,7 @@
 use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 use App\Routes\ReportRoutes;
+use App\Http\Controllers\EmailInfo\EmailInfoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,13 @@ use App\Routes\ReportRoutes;
 // Route::get("/backlog/daily", [ReportsController::class, 'getBacklogTicketsDaily']);
 // Route::get("/backlog/weekly", [ReportsController::class, 'getBacklogTicketsWeekly']);
 // Route::get("/backlog/monthly", [ReportsController::class, 'getBacklogTicketsMonthly']);
+
+
+Route::get("/emailnfo-post", [EmailInfoController::class, 'postEmailInfo']);
+Route::get("/emailInfo-get", [EmailInfoController::class, 'getEmailInfo']);
+Route::get("/emailInfo-getall", [EmailInfoController::class, 'getAllEmailInfo']);
+Route::get("/emailInfo-delete", [EmailInfoController::class, 'deleteEmailInfo']);
+Route::get("/emailInfo-update", [EmailInfoController::class, 'updateEmailInfo']);
 
 
 

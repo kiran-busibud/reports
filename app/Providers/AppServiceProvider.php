@@ -2,21 +2,23 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\UnresolvedTicketsByChannelsController;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\TicketRepository;
+use App\Repositories\EmailInfo\IEmailInfoRepository;
+use App\Repositories\EmailInfo\EmailInfoRepository;
+
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-    // public function register(): void
-    // {
-    //     $this->app->bind(UnresolvedTicketsByChannelsController::class, function () {
-    //         return new TicketRepository();
-    //     });
-    // }
+    public function register(): void
+    {
+        $this->app->bind(IEmailInfoRepository::class, function () {
+            return new EmailInfoRepository();
+        });
+    }
 
     /**
      * Bootstrap any application services.
