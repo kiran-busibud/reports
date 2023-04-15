@@ -21,6 +21,7 @@ class EmailInfoEntity
     public $createdAt = null;
     public $updatedAt = null;
     public $isDeleted = null;
+    public $tenant = null;
     public $metaData = [];
 
     /**
@@ -60,6 +61,7 @@ class EmailInfoEntity
         $entity->createdAt = $entityData[EmailInfoKeys::CREATED_AT];
         $entity->updatedAt = $entityData[EmailInfoKeys::UPDATED_AT];
         $entity->isDeleted = $entityData[EmailInfoKeys::IS_DELETED];
+        $entity->tenant = $entityData[EmailInfoKeys::TENANT];
 
         return $entity;
     }

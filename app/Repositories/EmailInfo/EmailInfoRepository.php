@@ -26,6 +26,7 @@ class EmailInfoRepository implements IEmailInfoRepository
         EmailInfoKeys::CREATED_AT,
         EmailInfoKeys::UPDATED_AT,
         EmailInfoKeys::IS_DELETED,
+        EmailInfokeys::TENANT,
     ];
 
     private $EmailInfoMapper;
@@ -290,6 +291,9 @@ class EmailInfoRepository implements IEmailInfoRepository
                 break;
             case EmailInfoKeys::IS_DELETED:
                 $entity->isDeleted = $value;
+                break;
+            case EmailInfoKeys::TENANT:
+                $entity->payload = $value;
                 break;
         }
     }

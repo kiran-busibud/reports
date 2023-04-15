@@ -32,7 +32,7 @@ class EmailInfoMapper implements IEmailInfoMapper{
         //create instance of EmailInfoModel
         $model = new EmailInfoModel();
 
-        $model = $this->mapEmailInfoEntityToModel($entity, $model);
+        $model = $this->mapEmailInfoToModel($entity, $model);
 
         //persist data to database
         $success = $model->save();
@@ -311,6 +311,7 @@ class EmailInfoMapper implements IEmailInfoMapper{
         $model->created_at = $entity->createdAt;
         $model->updated_at = $entity->updatedAt;
         $model->is_deleted = $entity->isDeleted;
+        $model->tenant = $entity->tenant;
         
         return $model;
     }
