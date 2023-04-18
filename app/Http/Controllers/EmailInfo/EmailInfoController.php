@@ -55,13 +55,13 @@ class EmailInfoController
         $this->emailInfoService = $emailInfoService;
     }
 
-    public function postEmailInfo()
+    public function postEmailInfo(Request $request)
     {
-        // $result = $this->emailInfoRepository->create($this->payload);
-        // dd($result);
-
-        $result = $this->emailInfoService->postEmailInfo($this->payload);
+        $result = $this->emailInfoRepository->create($this->payload);
         dd($result);
+
+        // $result = $this->emailInfoService->postEmailInfo($this->payload);
+        // return response(200);
     }
 
     public function getEmailInfo()

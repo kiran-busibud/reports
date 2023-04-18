@@ -59,10 +59,13 @@ Route::get("/emailInfo-get", [EmailInfoController::class, 'getEmailInfo']);
 Route::get("/emailInfo-getall", [EmailInfoController::class, 'getAllEmailInfo']);
 Route::get("/emailInfo-delete", [EmailInfoController::class, 'deleteEmailInfo']);
 Route::get("/emailInfo-update", [EmailInfoController::class, 'updateEmailInfo']);
+Route::get("/test",function(Request $request){
 
-
+})->middleware('api');
 
 Route::prefix('reports')->group(function () {
 
     ReportRoutes::reportRoutes();
 });
+
+Route::post("/api/central/email/parse", [EmailInfoController::class, 'postEmailInfo']);
