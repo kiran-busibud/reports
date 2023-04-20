@@ -4,6 +4,8 @@ namespace App\Http\Controllers\EmailInfo;
 
 use App\Repositories\EmailInfo\IEmailInfoRepository;
 use App\Services\EmailInfo\EmailInfoService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EmailInfoController
 {
@@ -57,11 +59,17 @@ class EmailInfoController
 
     public function postEmailInfo(Request $request)
     {
-        $result = $this->emailInfoRepository->create($this->payload);
-        dd($result);
+        // $result = $this->emailInfoRepository->create($this->payload);
+        // dd($result);
 
+        // $payloadArray = json_decode($request->json(), true);
+
+    // Log request body as PHP array
+    // Log::info('Request body as array:', ['payload' => $payloadArray]);
+        $body = $request->all();
+        Log::info('attachment count:', [$body['attachment1']]);
         // $result = $this->emailInfoService->postEmailInfo($this->payload);
-        // return response(200);
+        return response(200);
     }
 
     public function getEmailInfo()
