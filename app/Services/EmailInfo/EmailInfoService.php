@@ -3,12 +3,15 @@
 namespace App\Services\EmailInfo;
 
 use App\Repositories\EmailInfo\emailInfoRepository;
+use App\Repositories\EmailInfo\AttachmentRepository;
 
 class EmailInfoService
 {
     protected $emailInfoRepository;
-    function __construct(emailInfoRepository $emailInfoRepository){
+    protected $attachmentRepository;
+    function __construct(emailInfoRepository $emailInfoRepository, AttachmentRepository $attachmentRepository){
         $this->emailInfoRepository = $emailInfoRepository;
+        $this->attachmentRepository = $attachmentRepository;
     }
 
     function getTenantFromEmail(string $email)

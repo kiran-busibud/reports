@@ -8,8 +8,8 @@ use App\Keys\EmailInfo\AttachmentKeys;
 use App\Keys\EmailInfo\AttachmentMetaKeys;
 use App\Mappers\EmailInfo\AttachmentMapper;
 use App\Mappers\EmailInfo\AttachmentMetaMapper;
-use App\Repositories\Option\OptionRepository;
-use App\Services\OptionService;
+use Illuminate\Support\Facades\Log;
+
 
 class AttachmentRepository implements IAttachmentRepository
 {
@@ -138,6 +138,9 @@ class AttachmentRepository implements IAttachmentRepository
 
         //add and get insertion id
         $attachmentId = $this->attachmentMapper->add($attachmentEntity);
+        
+        // Log::info('attachmentId',[$attachmentId]);
+        
         
         //if insertion false return
         if(!$attachmentId){
@@ -379,13 +382,11 @@ class AttachmentRepository implements IAttachmentRepository
      */
     private function setDateTime($payload){
 
-        $options = OptionService::getOptions();
-
         $dateTime = new \DateTime();
         
         $gmtDateTime = $dateTime->format('Y-m-d H:i:s');
         
-        $dateTime->setTimezone(new \DateTimeZone($options[OptionRepository::TIME_ZONE]) ?? config('app.fallback_timezone'));
+        $dateTime->setTimezone(new \DateTimeZone('Asia/Kolkata'));
 
         $companyDateTime = $dateTime->format('Y-m-d H:i:s');
 

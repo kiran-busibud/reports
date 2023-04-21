@@ -24,6 +24,7 @@ class AttachmentEntity
     public $uploadedDate;
     public $uploadedDateGmt;
     public $deleted;
+    public $failed;
 
     public $metaData = [];
 
@@ -54,6 +55,7 @@ class AttachmentEntity
         $attachmentEntity->uploadedDate = $attachmentData[AttachmentKeys::UPLOADED_DATE];
         $attachmentEntity->uploadedDateGmt = $attachmentData[AttachmentKeys::UPLOADED_DATE_GMT];
         $attachmentEntity->deleted = $attachmentData[AttachmentKeys::DELETED];
+        $attachmentEntity->failed = $attachmentData[AttachmentKeys::FAILED];
 
         //return the instance created
         return $attachmentEntity;

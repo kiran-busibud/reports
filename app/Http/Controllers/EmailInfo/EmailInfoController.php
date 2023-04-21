@@ -4,6 +4,7 @@ namespace App\Http\Controllers\EmailInfo;
 
 use App\Repositories\EmailInfo\IEmailInfoRepository;
 use App\Services\EmailInfo\EmailInfoService;
+use App\Services\EmailInfo\AttachmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -11,6 +12,7 @@ class EmailInfoController
 {
     protected $emailInfoRepository;
     protected $emailInfoService;
+    protected $attachmentService;
 
     protected $payload = [
         'id' => 10,
@@ -34,7 +36,7 @@ class EmailInfoController
                 "DKIM-Signature" => "v=1; a=rsa-sha256; c=relaxed/relaxed; d=sendgrid.com; s=ga1; h=mime-version:from:date:message-id:subject:to; bh=DpB1CYYeumytcPF3q0Upvx3Sq/oF4ZblEwnuVzFwqGI=; b=GH5YTxjt6r4HoTa+94w6ZGQszFQSgegF+Jlv69YV76OLycJI4Gxdwfh6Wlqfez5yID 5dsWuqaVJZQyMq/Dy/c2gHSqVo60BKG56YrynYeSrMPy8abE/6/muPilYxDoPoEyIr/c UXH5rhOKjmJ7nICKu1o99Tfl0cXyCskE7ERW0=",
                 "X-Google-DKIM-Signature" => "v=1; a=rsa-sha256; c=relaxed/relaxed; d=1e100.net; s=20130820; h=x-gm-message-state:mime-version:from:date:message-id:subject:to; bh=DpB1CYYeumytcPF3q0Upvx3Sq/oF4ZblEwnuVzFwqGI=; b=Sq6LVHbmywBdt3sTBn19U8VOmelfoJltz8IcnvcETZsYwk96RBxN+RKMN5fOZSKw4j 15HrgdIFfyDmp67YK0ygvOITlTvZ6XY5I0PtnvDtAQt79kS3tKjI3QKJoEp/ZjIjSzlL KG7agl6cxFgBbIN0yHWBOvy3O+ZXY8tZdom1yOvULjmjW1U9JkdOs+aJ6zq4qhZX/RM/ tIgLB461eJ5V95iQDDc5Ibj9Cvy4vJfXLQRO0nLVQAT2Yz58tkEO1bDZpWOPAyUNneIL yhIWp+Spbuqh"
             ]
-            ],
+        ],
         'is_processed' => false,
         'fail_count' => 1,
         'created_at' => '2023-04-14',
@@ -51,23 +53,39 @@ class EmailInfoController
         'updated_at' => NULL,
         'is_deleted' => 0,
     ];
-    public function __construct(IEmailInfoRepository $emailInfoRepository, EmailInfoService $emailInfoService)
+    public function __construct(IEmailInfoRepository $emailInfoRepository, EmailInfoService $emailInfoService, AttachmentService $attachmentService)
     {
         $this->emailInfoRepository = $emailInfoRepository;
         $this->emailInfoService = $emailInfoService;
+        $this->attachmentService = $attachmentService;
     }
+
+    // public function getAttachmentData($data)
+    // {
+    //     $attachments = [];
+    //     foreach($data['attachment-info'] as $attachment)
+    //     {
+    //         $curAttachment = 
+    //     }
+    // }
 
     public function postEmailInfo(Request $request)
     {
         // $result = $this->emailInfoRepository->create($this->payload);
         // dd($result);
 
-        // $payloadArray = json_decode($request->json(), true);
-
-    // Log request body as PHP array
-    // Log::info('Request body as array:', ['payload' => $payloadArray]);
         $body = $request->all();
-        Log::info('attachment count:', [$body['attachment1']]);
+        $body = json_decode(json_encode($body), true);
+        Log::info('body', [$body]);
+        $attachments = [];
+        $attachmentInfo = json_decode($body['attachment-info'], true);
+        foreach ($attachmentInfo as $attachmentName => $attachmentData) {
+            $attachments[$attachmentName] = $attachmentData;
+            $attachments[$attachmentName]['url'] = count($body[$attachmentName]) != 0 ? $body[$attachmentName][0] : "";
+        }
+
+        Log::info('attachments', $attachments);
+        $this->attachmentService->saveAttachments($attachments);
         // $result = $this->emailInfoService->postEmailInfo($this->payload);
         return response(200);
     }

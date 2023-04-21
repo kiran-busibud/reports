@@ -8,8 +8,8 @@
 
 namespace App\Mappers\EmailInfo;
 
-use App\Data\Entities\Attachment\AttachmentMetaEntity;
-use App\Data\Keys\Attachment\AttachmentMetaKeys;
+use App\Entities\EmailInfo\AttachmentMetaEntity;
+use App\Keys\EmailInfo\AttachmentMetaKeys;
 use App\Models\AttachmentMetaModel;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

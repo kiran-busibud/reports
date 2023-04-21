@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\TicketRepository;
 use App\Repositories\EmailInfo\IEmailInfoRepository;
 use App\Repositories\EmailInfo\EmailInfoRepository;
+use App\Repositories\EmailInfo\IAttachmentRepository;
+use App\Repositories\EmailInfo\AttachmentRepository;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -17,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(IEmailInfoRepository::class, function () {
             return new EmailInfoRepository();
+        });
+        $this->app->bind(IAttachmentRepository::class, function () {
+            return new AttachmentRepository();
         });
     }
 

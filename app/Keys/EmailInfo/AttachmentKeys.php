@@ -25,6 +25,7 @@ final class AttachmentKeys
     const UPLOADED_DATE = 'uploaded_date';
     const UPLOADED_DATE_GMT = 'uploaded_date_gmt';
     const DELETED = 'deleted';
+    const FAILED = 'failed';
 }
 
 ?>

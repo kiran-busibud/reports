@@ -287,7 +287,7 @@ class AttachmentMapper implements IAttachmentMapper
         $attachmentModel->uploaded_date = $attachmentEntity->uploadedDate;
         $attachmentModel->uploaded_date_gmt = $attachmentEntity->uploadedDateGmt;
         $attachmentModel->deleted = $attachmentEntity->deleted;
-        
+        $attachmentModel->failed = $attachmentEntity->failed;
         //return mapped model
         return $attachmentModel;
     }
