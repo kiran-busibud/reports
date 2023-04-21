@@ -31,6 +31,7 @@ class AttachmentRepository implements IAttachmentRepository
         AttachmentKeys::UPLOADED_DATE,
         AttachmentKeys::UPLOADED_DATE_GMT,
         AttachmentKeys::DELETED,
+        AttachmentKeys::FAILED,
     ];
 
     public function __construct() {

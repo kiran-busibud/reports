@@ -76,16 +76,23 @@ class EmailInfoController
 
         $body = $request->all();
         $body = json_decode(json_encode($body), true);
-        Log::info('body', [$body]);
         $attachments = [];
-        $attachmentInfo = json_decode($body['attachment-info'], true);
-        foreach ($attachmentInfo as $attachmentName => $attachmentData) {
-            $attachments[$attachmentName] = $attachmentData;
-            $attachments[$attachmentName]['url'] = count($body[$attachmentName]) != 0 ? $body[$attachmentName][0] : "";
+
+        if (isset($body['attachment-info'])) {
+            $attachmentInfo = json_decode($body['attachment-info'], true);
+            // $file = $request->file('attachment1');
+            // Log::info('files',[$file->getSize()]);
+
+            foreach ($attachmentInfo as $attachmentName => $attachmentData) {
+                $attachments[$attachmentName] = $attachmentData;
+                $attachments[$attachmentName]['file'] = $request->file($attachmentName);
+            }
+
+            Log::info('attachments', $attachments);
+
+            $this->attachmentService->saveAttachments($attachments);
         }
 
-        Log::info('attachments', $attachments);
-        $this->attachmentService->saveAttachments($attachments);
         // $result = $this->emailInfoService->postEmailInfo($this->payload);
         return response(200);
     }

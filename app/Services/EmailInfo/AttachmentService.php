@@ -25,16 +25,10 @@ class AttachmentService
 
     }
 
-    public function downloadFile($attachment)
+    public function uploadFile($attachment)
     {
-        $success = true;
-        try{
-        $path = Storage::putFileAs('photos', new UploadedFile($attachment['url'],$attachment['name']), $attachment['name']);
-        }
-        catch(\Exception $e){
-            $success = false;
-        }
-        return $success;
+        $path = $attachment->store('attachments', 'public');
+        return $path;
     }
 
     public function saveAttachments(array $attachments)
@@ -50,19 +44,30 @@ class AttachmentService
             $embedded = 0;
             $contentId = $attachment['content-id'];
 
-            $downloadSuccess = $this->downloadFile($attachment);
+            // $file = $attachment['file'];
+
+            $failed = false;
+
+            if(!isset($attachment['file']))
+            {
+                $failed = true;
+            }
+            else{
+                $file = $attachment['file'];
+            }
+            $path = $this->uploadFile($file);
             
-            $attachmentData[AttachmentKeys::ATTACHMENT_URL] = $attachment['url'];
+            $attachmentData[AttachmentKeys::ATTACHMENT_URL] = $path;
             $attachmentData[AttachmentKeys::BATCH_NUMBER] = $batchNumber;
-            $attachmentData[AttachmentKeys::ORIGINAL_NAME] = $attachment['name'];
-            $attachmentData[AttachmentKeys::ATTACHMENT_NAME] = $attachment['name'];
-            $attachmentData[AttachmentKeys::ATTACHMENT_SIZE] = 100;
-            $attachmentData[AttachmentKeys::ATTACHMENT_TYPE] = $attachment['type'];
+            $attachmentData[AttachmentKeys::ORIGINAL_NAME] = $file->getClientOriginalName();
+            $attachmentData[AttachmentKeys::ATTACHMENT_NAME] = $file->getClientOriginalExtension();
+            $attachmentData[AttachmentKeys::ATTACHMENT_SIZE] = $file->getSize();
+            $attachmentData[AttachmentKeys::ATTACHMENT_TYPE] = $file->getMimeType();
             $attachmentData[AttachmentKeys::EMBEDDED] = $embedded;
             $attachmentData[AttachmentKeys::CONTENT_ID] = $contentId;
-            $attachmentData[AttachmentKeys::ATTACHMENT_EXTENSION] = $attachment['type'];
+            $attachmentData[AttachmentKeys::ATTACHMENT_EXTENSION] = $file->getClientOriginalExtension();
             $attachmentData[AttachmentKeys::DELETED] = 0;
-            $attachmentData[AttachmentKeys::FAILED] = $downloadSuccess;
+            $attachmentData[AttachmentKeys::FAILED] = $failed;
 
             $status = $this->attachmentRepository->create($attachmentData);
 
