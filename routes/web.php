@@ -4,7 +4,7 @@ use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 use App\Routes\ReportRoutes;
 use App\Http\Controllers\EmailInfo\EmailInfoController;
-
+use App\Http\Controllers\TenancyController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -69,3 +69,5 @@ Route::prefix('reports')->group(function () {
 });
 
 Route::post("/api/central/email/parse", [EmailInfoController::class, 'postEmailInfo']);
+
+Route::get("/changeTenant", [TenancyController::class, 'changeTenancy']);

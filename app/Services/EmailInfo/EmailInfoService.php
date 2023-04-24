@@ -2,14 +2,14 @@
 
 namespace App\Services\EmailInfo;
 
-use App\Repositories\EmailInfo\emailInfoRepository;
+use App\Repositories\EmailInfo\EmailInfoRepository;
 use App\Repositories\EmailInfo\AttachmentRepository;
 
 class EmailInfoService
 {
     protected $emailInfoRepository;
     protected $attachmentRepository;
-    function __construct(emailInfoRepository $emailInfoRepository, AttachmentRepository $attachmentRepository){
+    function __construct(EmailInfoRepository $emailInfoRepository, AttachmentRepository $attachmentRepository){
         $this->emailInfoRepository = $emailInfoRepository;
         $this->attachmentRepository = $attachmentRepository;
     }
@@ -35,5 +35,11 @@ class EmailInfoService
         $payload['payload'] = json_encode($payload['payload']);
 
         return $this->emailInfoRepository->create($payload);
+    }
+
+    function getAllEmails()
+    {
+        $emails = $this->emailInfoRepository->getAll();
+        return $emails;
     }
 }
