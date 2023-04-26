@@ -104,7 +104,7 @@ class ParseService
 
     $ccEmails = [];
 
-    if (isset($data['cc'])) {
+    if (isset($data['cc'])) { 
 
       $ccEmails = $this->emailFormatter(explode(",", $data['cc']));
     }

@@ -11,13 +11,13 @@ class TenancyController extends Controller
 {
     public function changeTenancy(Request $request)
     {
-        $tenant = Tenant::find('2');
+        $tenant = Tenant::find('222');
 
         tenancy()->initialize($tenant);
 
-        $databaseName = DB::connection()->getDatabaseName();
+        // $databaseName = DB::connection()->getDatabaseName();
 
-        echo $databaseName;
+        // echo $databaseName;
 
         // tenancy()->end();
 
@@ -31,7 +31,13 @@ class TenancyController extends Controller
         //     DB::table('users')->insert([]);
         // });
 
-        $databaseName = DB::connection()->getDatabaseName();
-            echo $databaseName;
+        // $databaseName = DB::connection()->getDatabaseName();
+        //     echo $databaseName;
+
+        $tenants = Tenant::all();
+
+        foreach ($tenants as $tenant) {
+            echo "Tenant ID: " . $tenant->id . "<br>";
+}
     }
 }

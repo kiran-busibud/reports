@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Tenant;
+use Illuminate\Support\Facades\Log;
 
 class AttachmentService
 {
@@ -17,7 +18,7 @@ class AttachmentService
     protected $attachmentRepository;
     protected $disk;
 
-    public function __construct(IAttachmentRepository $attachmentRepository) 
+    public function __construct(IAttachmentRepository $attachmentRepository)
     {
 
         $this->attachmentRepository = $attachmentRepository;
@@ -35,14 +36,48 @@ class AttachmentService
     public function addAttachmentsToTenantDirectory(array $attachments)
     {
 
-        foreach($attachments as $attachment)
-        {
-            $tenant = $attachment->tenant;
-            $file = UploadedFile::fake()->create($attachment->attachment_url);
+        foreach ($attachments as $attachment) {
 
-            if($tenant == null) $tenant=0;
+            $attachment = json_decode(json_encode($attachment), true);
 
-            $file->store('tenant'.$tenant,'public');
+            $tenantId = $attachment['tenant'];
+
+            // Log::info('tenantId',[$tenantId]);
+            // Log::info('attachment',[$attachment]);
+
+            if ($tenantId == null)
+            {
+                $tenantId = 555;
+            }
+
+            Log::info('tenantId',[$tenantId]);
+
+            $tenant = Tenant::find($tenantId);
+
+
+            tenancy()->initialize($tenant);
+
+            $file = UploadedFile::fake()->create($attachment['attachment_url']);
+
+            $file->store('tenant' . $tenantId, 'public');
+
+            $attachmentData = [];
+
+            $attachmentData[AttachmentKeys::ATTACHMENT_URL] = $attachment[AttachmentKeys::ATTACHMENT_URL];
+            $attachmentData[AttachmentKeys::BATCH_NUMBER] = $attachment[AttachmentKeys::BATCH_NUMBER];
+            $attachmentData[AttachmentKeys::ORIGINAL_NAME] = $attachment[AttachmentKeys::ATTACHMENT_NAME];
+            $attachmentData[AttachmentKeys::ATTACHMENT_NAME] = $attachment[AttachmentKeys::ATTACHMENT_NAME];
+            $attachmentData[AttachmentKeys::ATTACHMENT_SIZE] = $attachment[AttachmentKeys::ATTACHMENT_SIZE];
+            $attachmentData[AttachmentKeys::ATTACHMENT_TYPE] = $attachment[AttachmentKeys::ATTACHMENT_TYPE];
+            $attachmentData[AttachmentKeys::EMBEDDED] = $attachment[AttachmentKeys::EMBEDDED];
+            $attachmentData[AttachmentKeys::CONTENT_ID] = $attachment[AttachmentKeys::CONTENT_ID];
+            $attachmentData[AttachmentKeys::ATTACHMENT_EXTENSION] = $attachment[AttachmentKeys::ATTACHMENT_EXTENSION];
+            $attachmentData[AttachmentKeys::DELETED] = $attachment[AttachmentKeys::DELETED];
+            $attachmentData[AttachmentKeys::FAILED] = $attachment[AttachmentKeys::FAILED];
+
+            $status = $this->attachmentRepository->create($attachmentData);
+
+            tenancy()->end();
         }
     }
 
@@ -53,7 +88,7 @@ class AttachmentService
         $batchNumber = Str::uuid()->toString();
 
         foreach ($attachments as $attachment) {
-            
+
             $attachmentData = [];
 
             $embedded = 0;
@@ -63,15 +98,13 @@ class AttachmentService
 
             $failed = false;
 
-            if(!isset($attachment['file']))
-            {
+            if (!isset($attachment['file'])) {
                 $failed = true;
-            }
-            else{
+            } else {
                 $file = $attachment['file'];
             }
             $path = $this->uploadFile($file);
-            
+
             $attachmentData[AttachmentKeys::ATTACHMENT_URL] = $path;
             $attachmentData[AttachmentKeys::BATCH_NUMBER] = $batchNumber;
             $attachmentData[AttachmentKeys::ORIGINAL_NAME] = $file->getClientOriginalName();

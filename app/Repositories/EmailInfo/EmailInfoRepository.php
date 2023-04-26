@@ -285,12 +285,6 @@ class EmailInfoRepository implements IEmailInfoRepository
             case EmailInfoKeys::FAIL_COUNT:
                 $entity->failCount = $value;
                 break;
-            case EmailInfoKeys::CREATED_AT:
-                $entity->createdAt = $value;
-                break;
-            case EmailInfoKeys::UPDATED_AT:
-                $entity->updatedAt = $value;
-                break;
             case EmailInfoKeys::IS_DELETED:
                 $entity->isDeleted = $value;
                 break;
@@ -304,7 +298,7 @@ class EmailInfoRepository implements IEmailInfoRepository
     {
         $params = [];
 
-        $query = "SELECT email_info.tenant,hl_attachments.attachment_url 
+        $query = "SELECT email_info.tenant,hl_attachments.* 
                 FROM `email_info` 
                 LEFT JOIN `email_info_meta` 
                     ON email_info.id=email_info_meta.email_info_id 
