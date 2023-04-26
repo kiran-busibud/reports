@@ -15,7 +15,7 @@ class EmailInfoController
     protected $attachmentService;
 
     protected $payload = [
-        'id' => 10,
+        'id' => 21,
         'payload' => [
             "envelope" => [
                 "to" => [
@@ -71,17 +71,19 @@ class EmailInfoController
 
     public function postEmailInfo(Request $request)
     {
-        // $result = $this->emailInfoRepository->create($this->payload);
         // dd($result);
 
         $body = $request->all();
         $body = json_decode(json_encode($body), true);
+
+        // Log::info('body',[$body]);
+
         $attachments = [];
 
         if (isset($body['attachment-info'])) {
             $attachmentInfo = json_decode($body['attachment-info'], true);
-            // $file = $request->file('attachment1');
-            // Log::info('files',[$file->getSize()]);
+            $file = $request->file('attachment1');
+            Log::info('files',[$file->getSize()]);
 
             foreach ($attachmentInfo as $attachmentName => $attachmentData) {
                 $attachments[$attachmentName] = $attachmentData;
@@ -90,10 +92,11 @@ class EmailInfoController
 
             Log::info('attachments', $attachments);
 
-            $this->attachmentService->saveAttachments($attachments);
+            $batchNumber = $this->attachmentService->saveAttachments($attachments);
+            $this->payload['batchNumber'] = $batchNumber;
         }
 
-        // $result = $this->emailInfoService->postEmailInfo($this->payload);
+        $result = $this->emailInfoService->postEmailInfo($this->payload);
         return response(200);
     }
 

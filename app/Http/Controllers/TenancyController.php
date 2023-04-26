@@ -11,13 +11,13 @@ class TenancyController extends Controller
 {
     public function changeTenancy(Request $request)
     {
-        // $tenant = Tenant::find('2');
+        $tenant = Tenant::find('2');
 
-        // tenancy()->initialize($tenant);
+        tenancy()->initialize($tenant);
 
-        // $databaseName = DB::connection()->getDatabaseName();
+        $databaseName = DB::connection()->getDatabaseName();
 
-        // echo $databaseName;
+        echo $databaseName;
 
         // tenancy()->end();
 

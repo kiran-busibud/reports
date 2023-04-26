@@ -16,14 +16,7 @@ class EmailInfoService
 
     function getTenantFromEmail(string $email)
     {
-        $tenant = random_int(1,2);
-        if($tenant == 2){
-            $tenant = null;
-        }
-        if($email == 'example3@example.com')
-        {
-            return 222;
-        }
+        $tenant = random_int(1,10);
         return $tenant;
     }
 
@@ -42,4 +35,12 @@ class EmailInfoService
         $emails = $this->emailInfoRepository->getAll();
         return $emails;
     }
+
+    function getAttachmentsWithTenant()
+    {
+        $attachments = $this->emailInfoRepository->getAttachmentsWithTenant();
+
+        return $attachments;
+    }
+    
 }

@@ -9,6 +9,7 @@ use App\Keys\EmailInfo\AttachmentMetaKeys;
 use Illuminate\Support\Str;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Tenant;
 
 class AttachmentService
 {
@@ -29,6 +30,20 @@ class AttachmentService
     {
         $path = $attachment->store('attachments', 'public');
         return $path;
+    }
+
+    public function addAttachmentsToTenantDirectory(array $attachments)
+    {
+
+        foreach($attachments as $attachment)
+        {
+            $tenant = $attachment->tenant;
+            $file = UploadedFile::fake()->create($attachment->attachment_url);
+
+            if($tenant == null) $tenant=0;
+
+            $file->store('tenant'.$tenant,'public');
+        }
     }
 
     public function saveAttachments(array $attachments)
@@ -70,6 +85,7 @@ class AttachmentService
             $attachmentData[AttachmentKeys::FAILED] = $failed;
 
             $status = $this->attachmentRepository->create($attachmentData);
+            return $batchNumber;
 
         }
 

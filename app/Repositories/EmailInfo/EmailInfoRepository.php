@@ -14,6 +14,8 @@ use App\Keys\EmailInfo\EmailInfoKeys;
 use App\Mappers\EmailInfo\EmailInfoMapper;
 use App\Mappers\EmailInfo\EmailInfoMetaMapper;
 use App\Repositories\EmailInfo\IEmailInfoRepository;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class EmailInfoRepository implements IEmailInfoRepository
 {
@@ -32,7 +34,8 @@ class EmailInfoRepository implements IEmailInfoRepository
     private $EmailInfoMapper;
     private $EmailInfoMetaMapper;
 
-    public function __construct(){
+    public function __construct()
+    {
 
         $this->EmailInfoMapper = new EmailInfoMapper();
 
@@ -59,10 +62,10 @@ class EmailInfoRepository implements IEmailInfoRepository
      */
     public function getById($id)
     {
-        
+
         return $this->EmailInfoMapper->get($id);
     }
-    
+
     /**
      * Create new entity
      *
@@ -72,29 +75,32 @@ class EmailInfoRepository implements IEmailInfoRepository
      */
     public function create(array $payload = [])
     {
+
         //separate the passed data to entityData and metaData
         $keys = $this->separateEntityAndMeta($payload);
 
+        // Log::info('entityData',[$keys['entityData']]);
         //create instance of EmailInfoEntity with the passed data
         $emailInfo = EmailInfoEntity::makeInstance($keys['entityData']);
-        
+
         //get the id of the saved EmailInfoEntity
         $insertionId = $this->EmailInfoMapper->add($emailInfo);
 
 
         //check if there is any insertion id
-        if(!$insertionId){
+        if (!$insertionId) {
             //no insertion id found, it means the add operation has failed
             return false;
         }
 
         //check if the metaData is present in the passed emailInfo data
-        if(!empty($keys['metaData'])){
+        if (!empty($keys['metaData'])) {
             //metaData is present, so add the meta data for the particular emailInfo
 
             //iterate over all the meta data and persist the meta data
-            foreach($keys['metaData'] as $metaKey => $metaValue){
+            foreach ($keys['metaData'] as $metaKey => $metaValue) {
 
+                Log::info('metakey', [$metaKey, $metaValue]);
                 //payload for creating the EmailInfoMetaEntity
                 $payload = [
                     EmailInfoMetaKeys::META_KEY => $metaKey,
@@ -133,13 +139,13 @@ class EmailInfoRepository implements IEmailInfoRepository
 
         $entity = $this->EmailInfoMapper->get($id);
 
-        if(!$entity){
+        if (!$entity) {
 
             return false;
         }
 
         //map the entityData to the EmailInfoEntity
-        foreach($keys['entityData'] as $key => $value){
+        foreach ($keys['entityData'] as $key => $value) {
             $this->mapKeyToEntity($entity, $key, $value);
         }
 
@@ -147,13 +153,13 @@ class EmailInfoRepository implements IEmailInfoRepository
         $success = $this->EmailInfoMapper->update($entity);
 
         //check if meta data is avaialble
-        if(!empty($keys['metaData'])){
+        if (!empty($keys['metaData'])) {
 
             //iterate over all the metaData passed as payload
-            foreach($keys['metaData'] as $key => $value){
-                
+            foreach ($keys['metaData'] as $key => $value) {
+
                 //check if the metakey is valid meta key
-                if(isset($entity->metaData[$key])){
+                if (isset($entity->metaData[$key])) {
                     //key is valid meta key, so update the metaData
 
                     //create instance of the metaEntity with the metaId
@@ -164,13 +170,11 @@ class EmailInfoRepository implements IEmailInfoRepository
                     //persist the updated meta values
                     $this->EmailInfoMetaMapper->update($metaEntity);
 
-                }
-                else
-                {
+                } else {
                     //key does not exists
 
                     //check if new key can be added
-                    if($canAddNew){
+                    if ($canAddNew) {
                         //create new meta entry 
 
                         //payload for new metaEntity creation
@@ -201,11 +205,11 @@ class EmailInfoRepository implements IEmailInfoRepository
      * 
      * @return bool Deleted entity status
      */
-    public function delete( $id): bool
+    public function delete($id): bool
     {
         $entity = $this->EmailInfoMapper->get($id);
-        
-        if(!$entity){
+
+        if (!$entity) {
             return false;
         }
 
@@ -229,16 +233,13 @@ class EmailInfoRepository implements IEmailInfoRepository
         $metaData = [];
 
         //iterating over keys to separate the entity and meta data
-        foreach($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
+
             //Check if key is in the allowedEntityValues array
-            if(in_array($key, $this->allowedEntityValues))
-            {
+            if (in_array($key, $this->allowedEntityValues)) {
                 //key is in the allowedEntityValues array, so it is enity key
                 $entityData[$key] = $value;
-            }
-            else
-            {
+            } else {
                 //key is not in the allowedEntityValues array, so it is meta key
                 $metaData[$key] = $value;
 
@@ -253,7 +254,7 @@ class EmailInfoRepository implements IEmailInfoRepository
     }
 
 
- 
+
     /**
      * This fucntion is used to map the keys to the EmailInfoEntity
      * 
@@ -264,9 +265,10 @@ class EmailInfoRepository implements IEmailInfoRepository
      * @return void
      * 
      */
-    private function mapKeyToEntity(EmailInfoEntity $entity, string $key, $value){
-        
-        switch($key){
+    private function mapKeyToEntity(EmailInfoEntity $entity, string $key, $value)
+    {
+
+        switch ($key) {
 
             case EmailInfoKeys::ID:
                 $entity->id = $value;
@@ -298,4 +300,20 @@ class EmailInfoRepository implements IEmailInfoRepository
         }
     }
 
+    function getAttachmentsWithTenant()
+    {
+        $params = [];
+
+        $query = "SELECT email_info.tenant,hl_attachments.attachment_url 
+                FROM `email_info` 
+                LEFT JOIN `email_info_meta` 
+                    ON email_info.id=email_info_meta.email_info_id 
+                LEFT JOIN `hl_attachments` 
+                    ON email_info_meta.meta_value=hl_attachments.batch_number 
+                WHERE hl_attachments.attachment_url IS NOT NULL";
+
+        $attachments = DB::select($query, $params);
+
+        return $attachments;
+    }
 }
