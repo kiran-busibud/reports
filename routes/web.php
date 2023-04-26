@@ -68,6 +68,6 @@ Route::prefix('reports')->group(function () {
     ReportRoutes::reportRoutes();
 });
 
-Route::post("/api/central/email/parse", [EmailInfoController::class, 'postEmailInfo']);
+Route::post("/api/central/email/parse", [EmailInfoController::class, 'saveEmailPayloadAndAttachments']);
 
 Route::get("/changeTenant", [TenancyController::class, 'changeTenancy']);

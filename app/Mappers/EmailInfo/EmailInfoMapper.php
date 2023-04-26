@@ -304,12 +304,9 @@ class EmailInfoMapper implements IEmailInfoMapper{
      */
     private function mapEmailInfoToModel(EmailInfoEntity $entity, EmailInfoModel $model){
         
-        $model->id = $entity->id;
         $model->payload = $entity->payload;
         $model->is_processed = $entity->isProcessed;
         $model->fail_count = $entity->failCount;
-        $model->created_at = $entity->createdAt;
-        $model->updated_at = $entity->updatedAt;
         $model->is_deleted = $entity->isDeleted;
         $model->tenant = $entity->tenant;
         

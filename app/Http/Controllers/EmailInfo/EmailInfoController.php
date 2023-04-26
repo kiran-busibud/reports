@@ -100,6 +100,28 @@ class EmailInfoController
         return response(200);
     }
 
+    public function saveEmailPayloadAndAttachments(Request $request)
+    {
+        $payload = $request->all();
+
+        $attachments = [];
+
+        if(isset($payload['attachment-info']))
+        {
+            $attachmentInfo = json_decode($payload['attachment-info'], true);
+
+            foreach ($attachmentInfo as $attachmentName => $attachmentData) {
+                $attachments[$attachmentName] = $attachmentData;
+                $attachments[$attachmentName]['file'] = $request->file($attachmentName);
+            }
+
+            $batchNumber = $this->attachmentService->saveAttachments($attachments);
+            $payload['batchNumber'] = $batchNumber;
+        }
+        
+        $result = $this->emailInfoService->postEmailInfo($payload);
+    }
+
     public function getEmailInfo()
     {
         $result = $this->emailInfoRepository->getById(2);

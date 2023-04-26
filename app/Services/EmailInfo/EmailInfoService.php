@@ -4,6 +4,8 @@ namespace App\Services\EmailInfo;
 
 use App\Repositories\EmailInfo\EmailInfoRepository;
 use App\Repositories\EmailInfo\AttachmentRepository;
+use Illuminate\Support\Facades\Log;
+
 
 class EmailInfoService
 {
@@ -20,12 +22,29 @@ class EmailInfoService
         return $tenant;
     }
 
+    // function postEmailInfo($payload)
+    // {
+    //     $envelope = $payload['payload']['envelope'];
+    //     $toEmails = $envelope['to'];
+    //     $payload['tenant'] = $this->getTenantFromEmail($toEmails[count($toEmails)-1]);
+    //     $payload['payload'] = json_encode($payload['payload']);
+
+    //     return $this->emailInfoRepository->create($payload);
+    // }
+
     function postEmailInfo($payload)
     {
-        $envelope = $payload['payload']['envelope'];
+        foreach($payload as $key=>$value)
+        {
+            Log::info('e',[$key,$value]);
+        }
+        $envelope = json_decode($payload['envelope'],true);
         $toEmails = $envelope['to'];
         $payload['tenant'] = $this->getTenantFromEmail($toEmails[count($toEmails)-1]);
-        $payload['payload'] = json_encode($payload['payload']);
+        $payload['payload'] = json_encode($payload);
+        $payload['is_processed'] = false;
+        $payload['fail_count'] = 0;
+        $payload['is_deleted'] = false;
 
         return $this->emailInfoRepository->create($payload);
     }
@@ -42,5 +61,5 @@ class EmailInfoService
 
         return $attachments;
     }
-    
+
 }
