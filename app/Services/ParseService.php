@@ -26,6 +26,7 @@ use App\Data\WebSocket\ChannelGenerator;
 use App\Events\NewTicketCreatedFromMailEvent;
 use App\Events\NewTicketMessageEvent;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Tenant;
 
 class ParseService
 {
@@ -74,8 +75,12 @@ class ParseService
     $this->headerParserUtility = new HeaderParserUtility();
   }
 
-  public function parseInboundWebhook($data, $attachments)
+  public function parseInboundWebhook($data, $attachments, $tenantId)
   {
+
+    $tenant = Tenant::find($tenantId);
+
+    tenancy()->initialize($tenant);
 
     Log::debug("ParseService : parseInboundWebhook() - Webhook got hit");
 
@@ -194,7 +199,7 @@ class ParseService
       }
 
     } else {
-
+      Tenant
       Log::debug("ParseService : parseInboundWebhook() - Email is not an reply to other email");
 
       $this->createNewTicket($data, $attachments, $emailLogId, $toEmails, $ccEmails, $brandEntity);
@@ -209,6 +214,8 @@ class ParseService
     //   'attachments' => json_encode($storedAttachments)
     // ];
     // $this->messageRepository->update($storedMessageId['id'], $payload, true);
+
+    tenancy()->end();
   }
 
   private function createNewTicket($data, $attachments, $emailLogId, $toEmails, $ccEmails, $brandEntity)

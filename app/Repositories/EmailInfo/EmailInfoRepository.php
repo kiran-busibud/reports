@@ -310,4 +310,23 @@ class EmailInfoRepository implements IEmailInfoRepository
 
         return $attachments;
     }
+
+    function getUnprocessesEmailsWithAttachments()
+    {
+        $params = [];
+
+        $query = "SELECT email_info.payload, email_info.tenant,hl_attachments.attachment_url, hl_attachments.batch_number
+                FROM `email_info` 
+                LEFT JOIN `email_info_meta` 
+                    ON email_info.id=email_info_meta.email_info_id 
+                LEFT JOIN `hl_attachments` 
+                    ON email_info_meta.meta_value=hl_attachments.batch_number 
+                WHERE hl_attachments.attachment_url IS NOT NULL";
+
+        $emails = DB::select($query, $params);
+
+        return $emails;
+    }
+
+    
 }
